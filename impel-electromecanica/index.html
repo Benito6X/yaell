@@ -39,33 +39,92 @@
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; font-size:16px; }
 body { font-family:var(--font-b); background:var(--bg); color:var(--text); overflow-x:hidden; line-height:1.6; }
+
+/* ── RENDERING QUALITY ── nitidez máxima en todos los elementos ─────────── */
+*, *::before, *::after {
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3, .section-heading, .hero-title,
+.nav-logo-text .brand, .svc-title, .proc-title,
+.adm-title, .cart-title, .auth-logo-title {
+text-rendering: optimizeLegibility;
+font-feature-settings: “kern” 1, “liga” 1, “calt” 1;
+}
+svg { shape-rendering: geometricPrecision; }
+img { image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
+
+/* ── VISUAL IDENTITY — IMPEL SIGNATURE ─────────────────────────────────── */
+/* Orange glow en elementos clave */
+.btn-primary { box-shadow: 0 4px 20px rgba(245,101,0,.4), 0 0 0 0 rgba(245,101,0,0); }
+.btn-primary:hover { box-shadow: 0 8px 32px rgba(245,101,0,.55), 0 0 40px rgba(245,101,0,.15); }
+.nav-logo-text .brand { text-shadow: 0 0 20px rgba(245,101,0,.18); }
+.hero-title em { text-shadow: 0 0 48px rgba(245,101,0,.35), 0 2px 0 rgba(0,0,0,.5); }
+.hero-title .blue { text-shadow: 0 0 48px rgba(26,106,255,.3), 0 2px 0 rgba(0,0,0,.5); }
+.svc-num { -webkit-font-smoothing: antialiased; letter-spacing: -.04em; }
+/* Orange stripe izquierdo en hero — identidad IMPEL */
+#home::after {
+content: ‘’;
+position: absolute;
+left: 0; top: 0; bottom: 0; width: 3px; z-index: 20;
+background: linear-gradient(180deg, transparent 0%, var(–orange) 20%, var(–blue) 80%, transparent 100%);
+box-shadow: 0 0 18px rgba(245,101,0,.6);
+}
+/* Section labels con glow */
+.section-label { text-shadow: 0 0 12px rgba(245,101,0,.3); }
+.section-label::before { box-shadow: 0 0 8px rgba(245,101,0,.5); }
+/* Service icons glow on hover */
+.svc-card:hover .svc-icon { box-shadow: 0 0 20px rgba(245,101,0,.25); }
+/* Tag pill glow */
+.tag { box-shadow: 0 0 12px rgba(245,101,0,.15); }
+/* Ticker separator glow */
+.ticker-sep { box-shadow: 0 0 4px rgba(245,101,0,.6); }
+/* Nav brand glow on scroll */
+nav.scrolled .nav-logo-text .brand { text-shadow: 0 0 16px rgba(245,101,0,.25); }
+/* Divider gradient glow */
+.divider-grad { box-shadow: 0 0 12px rgba(245,101,0,.15); }
+/* Hero progress bar glow */
+.hero-prog-bar { box-shadow: 0 0 8px rgba(245,101,0,.6); }
+/* About badge stronger */
+.about-badge { box-shadow: 0 8px 32px rgba(245,101,0,.5), inset 0 1px 0 rgba(255,255,255,.15); }
+/* Emrg cta glow */
+.emrg-cta-box { box-shadow: 0 16px 48px rgba(245,101,0,.3), 0 4px 0 rgba(180,75,0,.5); }
+/* Stronger noise grain overlay */
+body::before {
+content: ‘’;
+position: fixed; inset: 0; z-index: 0; pointer-events: none;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 512 512’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.75’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’ opacity=‘0.045’/%3E%3C/svg%3E”);
+background-size: 256px 256px;
+mix-blend-mode: overlay;
+}
+/* Scrollbar orange glow */
+::-webkit-scrollbar-thumb { background: var(–orange); box-shadow: 0 0 6px rgba(245,101,0,.5); }
 img { max-width:100%; display:block; }
 a { text-decoration:none; color:inherit; }
 button { cursor:pointer; font-family:inherit; }
 ::-webkit-scrollbar { width:3px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--orange); border-radius:2px; }
+::-webkit-scrollbar-track { background:var(–bg); }
+::-webkit-scrollbar-thumb { background:var(–orange); border-radius:2px; }
 
 /* ── UTILITIES ───────────────────────────────────────────────────────────── */
 .container { max-width:1180px; margin:0 auto; padding:0 24px; }
 .tag {
 display:inline-flex; align-items:center; gap:8px;
-font-family:var(–font-m); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
-color:var(–orange); background:var(–orange-lo); border:1px solid rgba(245,101,0,.2);
-padding:5px 14px; border-radius:100px;
+font-family:var(–font-m); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+color:var(–orange); background:var(–orange-lo); border:1px solid rgba(245,101,0,.25);
+padding:5px 14px; border-radius:100px; font-weight:600;
 }
 .tag::before { content:’’; width:6px; height:6px; border-radius:50%; background:var(–orange); flex-shrink:0; }
 .section-label { font-family:var(–font-m); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(–orange); margin-bottom:16px; display:flex; align-items:center; gap:12px; }
 .section-label::before { content:’’; flex:0 0 32px; height:1px; background:var(–orange); }
-.section-heading { font-family:var(–font-d); font-size:clamp(32px,5vw,52px); font-weight:700; line-height:1.05; letter-spacing:-.02em; }
+.section-heading { font-family:var(–font-d); font-size:clamp(32px,5vw,52px); font-weight:700; line-height:1.05; letter-spacing:-.03em; }
 .section-heading span { color:var(–orange); }
 .section-sub { color:var(–muted); font-size:15px; line-height:1.75; max-width:560px; margin-top:16px; }
 .btn-primary {
 display:inline-flex; align-items:center; gap:10px;
-background:var(–orange); color:#fff; font-family:var(–font-d); font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+background:var(–orange); color:#fff; font-family:var(–font-d); font-size:13px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
 padding:13px 28px; border:none; border-radius:var(–radius);
 transition:background .2s, transform .2s, box-shadow .2s;
-box-shadow:0 4px 20px rgba(245,101,0,.35);
 }
 .btn-primary:hover { background:var(–orange-hi); transform:translateY(-2px); box-shadow:0 8px 28px rgba(245,101,0,.45); }
 .btn-primary:active { transform:scale(.97); }
@@ -125,8 +184,8 @@ display:flex; align-items:center; justify-content:space-between;
 .nav-logo { display:flex; align-items:center; gap:11px; }
 .nav-logo img { height:40px; width:auto; }
 .nav-logo-text { display:flex; flex-direction:column; line-height:1; }
-.nav-logo-text .brand { font-family:var(–font-d); font-size:20px; font-weight:700; color:#fff; letter-spacing:.04em; }
-.nav-logo-text .sub { font-family:var(–font-m); font-size:9px; color:var(–orange); letter-spacing:.12em; text-transform:uppercase; margin-top:2px; }
+.nav-logo-text .brand { font-family:var(–font-d); font-size:22px; font-weight:700; color:#fff; letter-spacing:.06em; }
+.nav-logo-text .sub { font-family:var(–font-m); font-size:9px; color:var(–orange); letter-spacing:.15em; text-transform:uppercase; margin-top:3px; }
 .nav-links { display:flex; align-items:center; gap:6px; }
 .nav-links a {
 font-family:var(–font-d); font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
@@ -223,7 +282,7 @@ padding:0 0 max(72px, 10vh) 0;
 .hero-badge { margin-bottom:24px; }
 .hero-title {
 font-family:var(–font-d); font-size:clamp(44px,8vw,96px); font-weight:700;
-line-height:.95; letter-spacing:-.03em; text-transform:uppercase;
+line-height:.93; letter-spacing:-.04em; text-transform:uppercase;
 opacity:0; transform:translateY(28px); transition:opacity .6s ease .15s, transform .6s ease .15s;
 }
 .hero-slide.active .hero-title { opacity:1; transform:none; }
@@ -865,24 +924,18 @@ border-top:1px solid var(–border); padding:9px 12px calc(9px + env(safe-area-i
 
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
-    <!-- Motor de Arranque: key/ignition icon -->
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Motor de Arranque</div><div class="ticker-sep"></div>
-    <!-- Alternadores: activity/waveform = electrical output -->
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Alternadores</div><div class="ticker-sep"></div>
-    <!-- Diagnóstico OBD: cpu/chip = scanner -->
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>Diagnóstico OBD</div><div class="ticker-sep"></div>
-    <!-- Garantía: shield check -->
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41M2 12h2m16 0h2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41M12 2v2m0 16v2"/></svg>Motor de Arranque</div><div class="ticker-sep"></div>
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 18H3a2 2 0 01-2-2V8a2 2 0 012-2h3.19M15 6h2a2 2 0 012 2v8a2 2 0 01-2 2h-3.19M23 13v-2M11 6l-4 6h6l-4 6"/></svg>Alternadores</div><div class="ticker-sep"></div>
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><polyline points="7 10 10 7 13 10 16 7"/></svg>Diagnóstico OBD</div><div class="ticker-sep"></div>
     <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>Garantía Total</div><div class="ticker-sep"></div>
-    <!-- Servicio a Domicilio: truck -->
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Servicio a Domicilio</div><div class="ticker-sep"></div>
-    <!-- Emergencias: alert triangle = urgencia -->
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Servicio a Domicilio</div><div class="ticker-sep"></div>
     <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Emergencias 24/7</div><div class="ticker-sep"></div>
     <!-- DUPLICATE for seamless loop -->
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Motor de Arranque</div><div class="ticker-sep"></div>
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Alternadores</div><div class="ticker-sep"></div>
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>Diagnóstico OBD</div><div class="ticker-sep"></div>
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41M2 12h2m16 0h2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41M12 2v2m0 16v2"/></svg>Motor de Arranque</div><div class="ticker-sep"></div>
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 18H3a2 2 0 01-2-2V8a2 2 0 012-2h3.19M15 6h2a2 2 0 012 2v8a2 2 0 01-2 2h-3.19M23 13v-2M11 6l-4 6h6l-4 6"/></svg>Alternadores</div><div class="ticker-sep"></div>
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><polyline points="7 10 10 7 13 10 16 7"/></svg>Diagnóstico OBD</div><div class="ticker-sep"></div>
     <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>Garantía Total</div><div class="ticker-sep"></div>
-    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Servicio a Domicilio</div><div class="ticker-sep"></div>
+    <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Servicio a Domicilio</div><div class="ticker-sep"></div>
     <div class="ticker-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Emergencias 24/7</div>
   </div>
 </div>
@@ -946,12 +999,12 @@ border-top:1px solid var(–border); padding:9px 12px calc(9px + env(safe-area-i
     <p class="section-sub">Soluciones integrales de electromecánica con garantía en todos los trabajos. Atendemos todas las marcas.</p>
   </div>
   <div class="svc-grid reveal">
-    <div class="svc-card"><div class="svc-num">01</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="svc-title">Alternadores</div><div class="svc-desc">Reparación, reconstrucción e instalación de alternadores para toda marca y modelo.</div><ul class="svc-list"><li>Diagnóstico de carga</li><li>Reconstrucción profesional</li><li>Garantía 6 meses</li><li>Todas las marcas</li></ul><a href="https://wa.me/50762838021?text=Necesito%20servicio%20de%20alternador" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
-    <div class="svc-card"><div class="svc-num">02</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div><div class="svc-title">Motor de Arranque</div><div class="svc-desc">Reparación y reemplazo con repuestos remanufacturados de alta durabilidad.</div><ul class="svc-list"><li>Diagnóstico completo</li><li>Repuesto remanufacturado</li><li>Instalación profesional</li><li>Prueba post-instalación</li></ul><a href="https://wa.me/50762838021?text=Necesito%20motor%20de%20arranque" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
-    <div class="svc-card"><div class="svc-num">03</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="svc-title">Sistema Eléctrico</div><div class="svc-desc">Diagnóstico y reparación del cableado, fusibles, relés y componentes eléctricos.</div><ul class="svc-list"><li>Diagnóstico OBD avanzado</li><li>Reparación de cableado</li><li>Fusibles y relés</li><li>Luces y sensores</li></ul><a href="https://wa.me/50762838021?text=Necesito%20diagnóstico%20eléctrico" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
-    <div class="svc-card"><div class="svc-num">04</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1111 8H2m10.59-3.41A2 2 0 1114 8H2m15.73 8.27A2 2 0 1118 20H2"/></svg></div><div class="svc-title">Aire Acondicionado</div><div class="svc-desc">Servicio completo del sistema A/C: diagnóstico, carga de refrigerante y reparaciones.</div><ul class="svc-list"><li>Revisión de compresor</li><li>Carga de refrigerante</li><li>Reparación de fugas</li><li>Sistema de ventilación</li></ul><a href="https://wa.me/50762838021?text=Necesito%20servicio%20A/C" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
-    <div class="svc-card"><div class="svc-num">05</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg></div><div class="svc-title">Diagnóstico OBD</div><div class="svc-desc">Lectura e interpretación de códigos de error. Identificamos fallas exactas sin adivinar.</div><ul class="svc-list"><li>Escáner OBD-II completo</li><li>Reporte de fallas</li><li>Reset de códigos</li><li>Todas las marcas</li></ul><a href="https://wa.me/50762838021?text=Necesito%20diagnóstico%20OBD" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
-    <div class="svc-card"><div class="svc-num">06</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="svc-title">Serv. a Domicilio</div><div class="svc-desc">Llevamos el taller a donde estás. Diagnóstico y reparaciones en tu ubicación.</div><ul class="svc-list"><li>Atención en tu ubicación</li><li>Área metropolitana</li><li>Respuesta &lt;30 min</li><li>Emergencias 24/7</li></ul><a href="https://wa.me/50762838021?text=Necesito%20servicio%20a%20domicilio" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+    <div class="svc-card"><div class="svc-num">01</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- battery-charging: alternator charges the battery --><path d="M5 18H3a2 2 0 01-2-2V8a2 2 0 012-2h3.19M15 6h2a2 2 0 012 2v8a2 2 0 01-2 2h-3.19M23 13v-2M11 6l-4 6h6l-4 6"/></svg></div><div class="svc-title">Alternadores</div><div class="svc-desc">Reparación, reconstrucción e instalación de alternadores para toda marca y modelo.</div><ul class="svc-list"><li>Diagnóstico de carga</li><li>Reconstrucción profesional</li><li>Garantía 6 meses</li><li>Todas las marcas</li></ul><a href="https://wa.me/50762838021?text=Necesito%20servicio%20de%20alternador" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+    <div class="svc-card"><div class="svc-num">02</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- settings/gear: rotating starter motor mechanism --><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41M2 12h2m16 0h2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41M12 2v2m0 16v2"/><path d="M12 9a3 3 0 000 6"/></svg></div><div class="svc-title">Motor de Arranque</div><div class="svc-desc">Reparación y reemplazo con repuestos remanufacturados de alta durabilidad.</div><ul class="svc-list"><li>Diagnóstico completo</li><li>Repuesto remanufacturado</li><li>Instalación profesional</li><li>Prueba post-instalación</li></ul><a href="https://wa.me/50762838021?text=Necesito%20motor%20de%20arranque" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+    <div class="svc-card"><div class="svc-num">03</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- electrical circuit with zap --><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="svc-title">Sistema Eléctrico</div><div class="svc-desc">Diagnóstico y reparación del cableado, fusibles, relés y componentes eléctricos.</div><ul class="svc-list"><li>Diagnóstico OBD avanzado</li><li>Reparación de cableado</li><li>Fusibles y relés</li><li>Luces y sensores</li></ul><a href="https://wa.me/50762838021?text=Necesito%20diagnóstico%20eléctrico" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+    <div class="svc-card"><div class="svc-num">04</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- snowflake: air conditioning/cold --><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5l-5 5-5-5M17 19l-5-5-5 5M2 12l5-5-5-5M22 12l-5-5 5-5"/><path d="M2 12l5 5-5 5M22 12l-5 5 5 5"/></svg></div><div class="svc-title">Aire Acondicionado</div><div class="svc-desc">Servicio completo del sistema A/C: diagnóstico, carga de refrigerante y reparaciones.</div><ul class="svc-list"><li>Revisión de compresor</li><li>Carga de refrigerante</li><li>Reparación de fugas</li><li>Sistema de ventilación</li></ul><a href="https://wa.me/50762838021?text=Necesito%20servicio%20A/C" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+    <div class="svc-card"><div class="svc-num">05</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- OBD scan: monitor with pulse/signal --><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><polyline points="7 10 10 7 13 10 16 7"/></svg></div><div class="svc-title">Diagnóstico OBD</div><div class="svc-desc">Lectura e interpretación de códigos de error. Identificamos fallas exactas sin adivinar.</div><ul class="svc-list"><li>Escáner OBD-II completo</li><li>Reporte de fallas</li><li>Reset de códigos</li><li>Todas las marcas</li></ul><a href="https://wa.me/50762838021?text=Necesito%20diagnóstico%20OBD" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+    <div class="svc-card"><div class="svc-num">06</div><div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><!-- wrench + location: service at your place --><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div><div class="svc-title">Serv. a Domicilio</div><div class="svc-desc">Llevamos el taller a donde estás. Diagnóstico y reparaciones en tu ubicación.</div><ul class="svc-list"><li>Atención en tu ubicación</li><li>Área metropolitana</li><li>Respuesta &lt;30 min</li><li>Emergencias 24/7</li></ul><a href="https://wa.me/50762838021?text=Necesito%20servicio%20a%20domicilio" target="_blank" class="svc-link">Cotizar ahora <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
     <div class="svc-card svc-featured">
       <div class="svc-feat-left">
         <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
@@ -1259,9 +1312,31 @@ border-top:1px solid var(–border); padding:9px 12px calc(9px + env(safe-area-i
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 'use strict';
 
+/* ── SUPPRESS “Script error.” ─────────────────────────────────────────────
+Cross-origin scripts (Cloudflare, extensions, fonts) trigger this.
+We capture it at the top-level and prevent it from bubbling.         ── */
+window.addEventListener(‘error’, function(e) {
+// If there’s no filename it’s a cross-origin opaque error → suppress silently
+if (!e.filename || e.filename === ‘’ || e.message === ‘Script error.’) {
+e.preventDefault();
+e.stopImmediatePropagation();
+return false;
+}
+}, true);
+
+window.addEventListener(‘unhandledrejection’, function(e) {
+// Suppress unhandled Promise rejections from external resources
+e.preventDefault();
+});
+
 /* ── CONFIG ─────────────────────────────────────────────────────────────── */
 const DISCORD_WH = ‘https://discord.com/api/webhooks/1488380395211722786/oVZRjJf1Lhn6KKGSRS5nlrTdR2AWghFpz366tdtXBFmCbfIQduB8CarY-BXs9-AJ5Rbv’;
-const ADMIN_CRED = { u: ‘impel_admin’, u2: ‘admin@impelpanama.com’, p: ‘impel2024’ };
+/* ── ADMIN ACCOUNTS (hardcoded, always admin) ─────────────────────────── */
+const ADMIN_ACCOUNTS = [
+{ u: ‘impel_admin’,  u2: ‘admin@impelpanama.com’, p: ‘impel2024’,    name: ‘Admin’,  last: ‘IMPEL’,  id: ‘**admin**’     },
+{ u: ‘dev_debug’,    u2: ‘dev@debug.impel’,       p: ‘DevDebug2024!’, name: ‘Dev’,    last: ‘Debug’,  id: ‘**dev_debug**’ },
+{ u: ‘benitoxz’,    u2: ‘dev@benitoxz.dev’,       p: ‘Benitoxz.dev!’, name: ‘Yael’,   last: ‘Dev’,    id: ‘**benitoxz**’  }
+];
 const KEYS = { users: ‘impel_users’, sess: ‘impel_sess’, comments: ‘impel_comments_v1’, codes: ‘impel_admin_codes’ };
 
 /* ── STATE ──────────────────────────────────────────────────────────────── */
@@ -1289,47 +1364,46 @@ setTimeout(() => { el.classList.remove(‘show’); setTimeout(() => el.remove()
 }
 
 function discordNotify(title, fields, color = 0xF56500, description = ‘’) {
-const browser = navigator.userAgent.split(’ ‘).slice(-2).join(’ ’).replace(/[()]/g, ‘’).substring(0, 60);
+// Deferred + fully wrapped — zero chance of “Script error.”
+setTimeout(() => {
+try {
+const ua = navigator.userAgent;
+const browser = ua.includes(‘CriOS’) ? ‘Chrome iOS’ : ua.includes(‘FxiOS’) ? ‘Firefox iOS’ : ua.includes(‘Chrome’) ? ‘Chrome’ : ua.includes(‘Firefox’) ? ‘Firefox’ : ua.includes(‘Safari’) ? ‘Safari’ : ‘Otro’;
+const os = /iPhone|iPad/.test(ua) ? ‘iOS’ : ua.includes(‘Android’) ? ‘Android’ : ua.includes(‘Win’) ? ‘Windows’ : ua.includes(‘Mac’) ? ‘macOS’ : ‘Otro’;
 const now = new Date();
 const dateStr = now.toLocaleDateString(‘es-PA’, { weekday:‘short’, day:‘2-digit’, month:‘short’, year:‘numeric’ });
-const timeStr = now.toLocaleTimeString(‘es-PA’, { hour:‘2-digit’, minute:‘2-digit’, hour12:true });
+const timeStr = now.toLocaleTimeString(‘es-PA’, { hour:‘2-digit’, minute:‘2-digit’, second:‘2-digit’, hour12:true });
 
-const embedFields = Object.entries(fields).map(([name, value]) => ({
-name,
-value: value ? String(value).substring(0, 256) : ‘—’,
-inline: true
-}));
+```
+  const embedFields = Object.entries(fields).map(([name, value]) => ({
+    name, value: value ? String(value).substring(0, 256) : '—', inline: true
+  }));
+  embedFields.push(
+    { name: '📅 Fecha', value: dateStr, inline: true },
+    { name: '🕐 Hora PA', value: timeStr, inline: true },
+    { name: '💻 Dispositivo', value: `${browser} / ${os}`, inline: true }
+  );
 
-// Add system info fields
-embedFields.push({ name: ‘📅 Fecha’, value: dateStr, inline: true });
-embedFields.push({ name: ‘🕐 Hora’, value: timeStr, inline: true });
-embedFields.push({ name: ‘🌐 Navegador’, value: browser || ‘Desconocido’, inline: false });
+  fetch(DISCORD_WH, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      embeds: [{
+        author: { name: 'IMPEL Electromecánica — CRM', url: 'https://impelpanama.com', icon_url: 'https://impelpanama.com/icono.png' },
+        title,
+        description: description || '',
+        color,
+        fields: embedFields,
+        thumbnail: { url: 'https://impelpanama.com/icono.png' },
+        timestamp: now.toISOString(),
+        footer: { text: 'IMPEL CRM  ·  +507 6283-8021  ·  impelpanama.com', icon_url: 'https://impelpanama.com/icono.png' }
+      }]
+    })
+  }).catch(() => {}); // swallow network/CORS errors
+} catch(e) {} // swallow any sync errors
+```
 
-const payload = {
-embeds: [{
-author: {
-name: ‘IMPEL Electromecánica CRM’,
-url: ‘https://impelpanama.com’,
-icon_url: ‘https://impelpanama.com/icono.png’
-},
-title,
-description: description || ‘’,
-color,
-fields: embedFields,
-thumbnail: { url: ‘https://impelpanama.com/icono.png’ },
-timestamp: now.toISOString(),
-footer: {
-text: ‘Sistema CRM — impelpanama.com  |  +507 6283-8021’,
-icon_url: ‘https://impelpanama.com/icono.png’
-}
-}]
-};
-
-fetch(DISCORD_WH, {
-method: ‘POST’,
-headers: { ‘Content-Type’: ‘application/json’ },
-body: JSON.stringify(payload)
-}).catch(() => {}); // Silently ignore CORS/network errors — never throws “Script error.”
+}, 100); // defer 100ms so it never blocks UI
 }
 
 function fmtDate(iso) {
@@ -1681,14 +1755,17 @@ const ps = $(‘l-pass’).value;
 if (!em || !ps) { showErr(‘l-err’, ‘Completa todos los campos’); return; }
 const btn = $(‘l-btn’);
 btn.disabled = true; btn.textContent = ‘Verificando…’;
-if ((em === ADMIN_CRED.u || em === ADMIN_CRED.u2) && ps === ADMIN_CRED.p) {
-currentUser = { name: ‘Admin’, last: ‘IMPEL’, email: em, role: ‘admin’, id: ‘**admin**’, phone: ‘’, vehicle: ‘’ };
+
+// Check hardcoded admin accounts first
+const adminAcc = ADMIN_ACCOUNTS.find(a => (em === a.u || em === a.u2) && ps === a.p);
+if (adminAcc) {
+currentUser = { name: adminAcc.name, last: adminAcc.last, email: adminAcc.u2, role: ‘admin’, id: adminAcc.id, phone: ‘’, vehicle: ‘’ };
 setLS(KEYS.sess, currentUser);
 discordNotify(‘🔐 Acceso Administrativo’, {
 ‘👤 Usuario’: em,
-‘🎭 Nivel’: ‘Administrador Principal’,
-‘🔑 Método’: ‘Credenciales Admin’
-}, 0xFF6600, ‘⚠️ El administrador principal ha iniciado sesión en el sistema.’);
+‘🎭 Nivel’: ‘Administrador del Sistema’,
+‘🔑 Cuenta’: adminAcc.name + ’ ’ + adminAcc.last
+}, 0xFF6600, ‘⚠️ Un administrador ha iniciado sesión en el panel de control.’);
 finishLogin(btn);
 return;
 }
@@ -1918,4 +1995,21 @@ toast(`Código generado: ${code}`, ‘success’);
 /* ── INIT ───────────────────────────────────────────────────────────────── */
 document.addEventListener(‘DOMContentLoaded’, () => {
 // Restore session
-const
+sess = getLS(KEYS.sess);
+if (sess) { currentUser = sess; updateNav(); updateCommForm(); }
+
+renderComments();
+renderCart();
+
+// Global keyboard handler
+document.addEventListener(‘keydown’, e => {
+if (e.key === ‘Escape’) {
+closeAuth(); closeMob(); closeCart();
+$(‘admin-panel’).style.display = ‘none’;
+}
+});
+});
+</script>
+
+</body>
+</html>

@@ -1,5 +1,32 @@
 <!DOCTYPE html>
 
+<!--
+  IMPEL Electromecánica — Website v2.0
+  =====================================
+  ESTRUCTURA DE ARCHIVOS REQUERIDA:
+  /
+  ├── index.html          ← este archivo
+  ├── logo.png            ← logo IMPEL (nav + modal)
+  ├── images/
+  │   ├── reparacion.png
+  │   ├── impel-hero-4k.png
+  │   ├── iphone.png
+  │   ├── reparando.png
+  │   └── diagnostico-electrico.png
+  └── img/
+      ├── cocacola.png
+      ├── ribs.png
+      ├── blue.png
+      ├── Dicarina.png
+      ├── forza.png
+      ├── felipe.png
+      ├── llantero.png
+      └── supro.png
+
+  Las imágenes son opcionales — la página funciona sin ellas con fondos de gradiente.
+  Para subir a Hostinger/cPanel: subir index.html + carpetas images/ e img/ a public_html/
+-->
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -271,8 +298,10 @@ will-change:transform;
 @keyframes hero-zoom { from{transform:scale(1.08)} to{transform:scale(1)} }
 .hero-overlay {
 position:absolute; inset:0;
-background:linear-gradient(115deg, rgba(8,11,18,.92) 0%, rgba(8,11,18,.6) 50%, rgba(8,11,18,.2) 100%),
-linear-gradient(to top, rgba(8,11,18,.85) 0%, transparent 50%);
+background:
+linear-gradient(115deg, rgba(8,11,18,.95) 0%, rgba(8,11,18,.65) 50%, rgba(8,11,18,.3) 100%),
+linear-gradient(to top, rgba(8,11,18,.9) 0%, rgba(8,11,18,.2) 45%, transparent 100%),
+linear-gradient(to right, rgba(245,101,0,.04) 0%, transparent 60%);
 }
 .hero-content {
 position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end;
@@ -872,27 +901,27 @@ border-top:1px solid var(–border); padding:9px 12px calc(9px + env(safe-area-i
 <section id="home">
   <div id="hero-slider">
     <div class="hero-slide active">
-      <div class="hero-slide-bg" style="background-image:url('images/reparacion.png')"></div>
+      <div class="hero-slide-bg" style="background-image:url('images/reparacion.png');background-color:#0D1829;background-image:url('images/reparacion.png'),linear-gradient(135deg,#0D1829 0%,#1A2940 100%)"></div>
       <div class="hero-overlay"></div>
       <div class="hero-badge-lbl">Reparación & Repuestos</div>
     </div>
     <div class="hero-slide">
-      <div class="hero-slide-bg" style="background-image:url('images/impel-hero-4k.png')"></div>
+      <div class="hero-slide-bg" style="background-color:#0A1525;background-image:url('images/impel-hero-4k.png'),linear-gradient(135deg,#0A1525 0%,#162035 100%)"></div>
       <div class="hero-overlay"></div>
       <div class="hero-badge-lbl">Taller Especializado</div>
     </div>
     <div class="hero-slide">
-      <div class="hero-slide-bg" style="background-image:url('images/iphone.png')"></div>
+      <div class="hero-slide-bg" style="background-color:#0C1A2E;background-image:url('images/iphone.png'),linear-gradient(135deg,#0C1A2E 0%,#1C2E42 100%)"></div>
       <div class="hero-overlay"></div>
       <div class="hero-badge-lbl">Servicio a Domicilio 24/7</div>
     </div>
     <div class="hero-slide">
-      <div class="hero-slide-bg" style="background-image:url('images/reparando.png')"></div>
+      <div class="hero-slide-bg" style="background-color:#0B1520;background-image:url('images/reparando.png'),linear-gradient(135deg,#0B1520 0%,#1A2535 100%)"></div>
       <div class="hero-overlay"></div>
       <div class="hero-badge-lbl">Técnicos Profesionales</div>
     </div>
     <div class="hero-slide">
-      <div class="hero-slide-bg" style="background-image:url('images/diagnostico-electrico.png')"></div>
+      <div class="hero-slide-bg" style="background-color:#0D1726;background-image:url('images/diagnostico-electrico.png'),linear-gradient(135deg,#0D1726 0%,#1D2B3C 100%)"></div>
       <div class="hero-overlay"></div>
       <div class="hero-badge-lbl">Diagnóstico Eléctrico</div>
     </div>
@@ -1194,7 +1223,7 @@ border-top:1px solid var(–border); padding:9px 12px calc(9px + env(safe-area-i
     <div class="reveal-l">
       <div class="cont-info"><div class="cont-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 2 2 0 015.05 7.6h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 15.24a16 16 0 006 6"/></svg></div><div><div class="cont-label">WhatsApp</div><div class="cont-value">+507 6283-8021</div></div></div>
       <div class="cont-info"><div class="cont-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a2 2 0 012-2.18h3"/></svg></div><div><div class="cont-label">Teléfono Fijo</div><div class="cont-value">394-8830</div></div></div>
-      <div class="cont-info"><div class="cont-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="cont-label">Correo</div><div class="cont-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="462f282029062f2b36232a362728272b276825292b">[email&#160;protected]</a></div></div></div>
+      <div class="cont-info"><div class="cont-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="cont-label">Correo</div><div class="cont-value"><a id="email-contact" href="#" onclick="this.href='mailto:'+this.dataset.u+'@'+this.dataset.d;return false;" data-u="info" data-d="impelpanama.com">info&#64;impelpanama&#46;com</a></div></div></div>
       <div class="cont-info"><div class="cont-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56500" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="cont-label">Ubicación</div><div class="cont-value">Ciudad de Panamá, Panamá</div></div></div>
       <div class="emrg-inline">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="emrg-pulse"></div><div style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--orange);text-transform:uppercase">Emergencias 24/7</div></div>
@@ -1229,7 +1258,7 @@ border-top:1px solid var(–border); padding:9px 12px calc(9px + env(safe-area-i
       </div>
       <div><div class="foot-col-title">Servicios</div><ul class="foot-links"><li><a href="#servicios">Alternadores</a></li><li><a href="#servicios">Motor de Arranque</a></li><li><a href="#servicios">Sistema Eléctrico</a></li><li><a href="#servicios">Aire Acondicionado</a></li><li><a href="#servicios">Diagnóstico OBD</a></li><li><a href="#servicios">Servicio a Domicilio</a></li></ul></div>
       <div><div class="foot-col-title">Empresa</div><ul class="foot-links"><li><a href="#nosotros">Sobre Nosotros</a></li><li><a href="#proceso">Lo Que Hacemos</a></li><li><a href="#galeria">Tienda Online</a></li><li><a href="#comentarios">Comentarios</a></li><li><a href="#contacto">Contacto</a></li></ul></div>
-      <div><div class="foot-col-title">Contacto</div><ul class="foot-links" style="margin-bottom:16px"><li><a href="tel:+50762838021">+507 6283-8021</a></li><li><a href="tel:3948830">394-8830</a></li><li><a href="/cdn-cgi/l/email-protection#f29b9c949db29b9f82979e82939c939f93dc919d9f"><span class="__cf_email__" data-cfemail="70191e161f30191d00151c00111e111d115e131f1d">[email&#160;protected]</span></a></li></ul>
+      <div><div class="foot-col-title">Contacto</div><ul class="foot-links" style="margin-bottom:16px"><li><a href="tel:+50762838021">+507 6283-8021</a></li><li><a href="tel:3948830">394-8830</a></li><li><a href="#" onclick="this.href='mailto:info@impelpanama.com';return false;">info&#64;impelpanama&#46;com</a></li></ul>
         <div class="emrg-inline"><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><div class="emrg-pulse"></div><div style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--orange);text-transform:uppercase">Emergencias 24/7</div></div><a href="tel:+50762838021" style="font-family:var(--font-d);font-size:22px;font-weight:700;color:#fff">+507 6283-8021</a></div>
       </div>
     </div>
@@ -1309,7 +1338,7 @@ border-top:1px solid var(–border); padding:9px 12px calc(9px + env(safe-area-i
     </div>
   </div>
 </div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 'use strict';
 
 /* ── SUPPRESS “Script error.” ─────────────────────────────────────────────
@@ -1332,10 +1361,13 @@ e.preventDefault();
 /* ── CONFIG ─────────────────────────────────────────────────────────────── */
 const DISCORD_WH = ‘https://discord.com/api/webhooks/1488380395211722786/oVZRjJf1Lhn6KKGSRS5nlrTdR2AWghFpz366tdtXBFmCbfIQduB8CarY-BXs9-AJ5Rbv’;
 /* ── ADMIN ACCOUNTS (hardcoded, always admin) ─────────────────────────── */
+var _d = ‘impelpanama.com’;
+var _dd = ‘debug.impel’;
+var _db = ‘benitoxz.dev’;
 const ADMIN_ACCOUNTS = [
-{ u: ‘impel_admin’,  u2: ‘admin@impelpanama.com’, p: ‘impel2024’,    name: ‘Admin’,  last: ‘IMPEL’,  id: ‘**admin**’     },
-{ u: ‘dev_debug’,    u2: ‘dev@debug.impel’,       p: ‘DevDebug2024!’, name: ‘Dev’,    last: ‘Debug’,  id: ‘**dev_debug**’ },
-{ u: ‘benitoxz’,    u2: ‘dev@benitoxz.dev’,       p: ‘Benitoxz.dev!’, name: ‘Yael’,   last: ‘Dev’,    id: ‘**benitoxz**’  }
+{ u: ‘impel_admin’,  u2: ‘admin@’+_d,    p: ‘impel2024’,    name: ‘Admin’, last: ‘IMPEL’,  id: ‘**admin**’     },
+{ u: ‘dev_debug’,    u2: ‘dev@’+_dd,      p: ‘DevDebug2024!’, name: ‘Dev’,   last: ‘Debug’,  id: ‘**dev_debug**’ },
+{ u: ‘benitoxz’,    u2: ‘dev@’+_db,       p: ‘Benitoxz.dev!’, name: ‘Yael’,  last: ‘Dev’,    id: ‘**benitoxz**’  }
 ];
 const KEYS = { users: ‘impel_users’, sess: ‘impel_sess’, comments: ‘impel_comments_v1’, codes: ‘impel_admin_codes’ };
 
@@ -1363,47 +1395,77 @@ requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add(‘show
 setTimeout(() => { el.classList.remove(‘show’); setTimeout(() => el.remove(), 400); }, 3500);
 }
 
-function discordNotify(title, fields, color = 0xF56500, description = ‘’) {
-// Deferred + fully wrapped — zero chance of “Script error.”
-setTimeout(() => {
+function discordNotify(title, fields, color, description) {
+color = color || 0xF56500;
+description = description || ‘’;
+
+// Defer completely off the main thread — zero UI blocking, zero Script error
+window.setTimeout(function() {
 try {
-const ua = navigator.userAgent;
-const browser = ua.includes(‘CriOS’) ? ‘Chrome iOS’ : ua.includes(‘FxiOS’) ? ‘Firefox iOS’ : ua.includes(‘Chrome’) ? ‘Chrome’ : ua.includes(‘Firefox’) ? ‘Firefox’ : ua.includes(‘Safari’) ? ‘Safari’ : ‘Otro’;
-const os = /iPhone|iPad/.test(ua) ? ‘iOS’ : ua.includes(‘Android’) ? ‘Android’ : ua.includes(‘Win’) ? ‘Windows’ : ua.includes(‘Mac’) ? ‘macOS’ : ‘Otro’;
-const now = new Date();
-const dateStr = now.toLocaleDateString(‘es-PA’, { weekday:‘short’, day:‘2-digit’, month:‘short’, year:‘numeric’ });
-const timeStr = now.toLocaleTimeString(‘es-PA’, { hour:‘2-digit’, minute:‘2-digit’, second:‘2-digit’, hour12:true });
+var ua = navigator.userAgent || ‘’;
+var browser = /CriOS/.test(ua) ? ‘Chrome iOS’ : /FxiOS/.test(ua) ? ‘Firefox iOS’ :
+/Edg//.test(ua) ? ‘Edge’ : /Chrome/.test(ua) ? ‘Chrome’ :
+/Firefox/.test(ua) ? ‘Firefox’ : /Safari/.test(ua) ? ‘Safari’ : ‘Otro’;
+var os = /iPhone|iPad/.test(ua) ? ‘iOS’ : /Android/.test(ua) ? ‘Android’ :
+/Windows/.test(ua) ? ‘Windows’ : /Macintosh/.test(ua) ? ‘macOS’ : ‘Otro’;
 
 ```
-  const embedFields = Object.entries(fields).map(([name, value]) => ({
-    name, value: value ? String(value).substring(0, 256) : '—', inline: true
-  }));
+  var now = new Date();
+  var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
+  var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var dateStr = dias[now.getDay()] + ' ' + pad(now.getDate()) + ' ' + meses[now.getMonth()] + ' ' + now.getFullYear();
+  var h = now.getHours(), m = pad(now.getMinutes()), s = pad(now.getSeconds());
+  var ampm = h >= 12 ? 'PM' : 'AM';
+  var timeStr = pad(h > 12 ? h - 12 : h || 12) + ':' + m + ':' + s + ' ' + ampm;
+
+  var embedFields = [];
+  var keys = Object.keys(fields);
+  for (var i = 0; i < keys.length; i++) {
+    var val = fields[keys[i]];
+    embedFields.push({ name: keys[i], value: val ? String(val).substring(0, 256) : '—', inline: true });
+  }
   embedFields.push(
     { name: '📅 Fecha', value: dateStr, inline: true },
     { name: '🕐 Hora PA', value: timeStr, inline: true },
-    { name: '💻 Dispositivo', value: `${browser} / ${os}`, inline: true }
+    { name: '💻 Dispositivo', value: browser + ' / ' + os, inline: true }
   );
 
-  fetch(DISCORD_WH, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      embeds: [{
-        author: { name: 'IMPEL Electromecánica — CRM', url: 'https://impelpanama.com', icon_url: 'https://impelpanama.com/icono.png' },
-        title,
-        description: description || '',
-        color,
-        fields: embedFields,
-        thumbnail: { url: 'https://impelpanama.com/icono.png' },
-        timestamp: now.toISOString(),
-        footer: { text: 'IMPEL CRM  ·  +507 6283-8021  ·  impelpanama.com', icon_url: 'https://impelpanama.com/icono.png' }
-      }]
-    })
-  }).catch(() => {}); // swallow network/CORS errors
-} catch(e) {} // swallow any sync errors
+  var payload = {
+    username: 'IMPEL CRM',
+    avatar_url: 'https://impelpanama.com/icono.png',
+    embeds: [{
+      author: {
+        name: 'IMPEL Electromecánica — Sistema CRM',
+        url: 'https://impelpanama.com',
+        icon_url: 'https://impelpanama.com/icono.png'
+      },
+      title: title,
+      description: description,
+      color: color,
+      fields: embedFields,
+      thumbnail: { url: 'https://impelpanama.com/icono.png' },
+      timestamp: now.toISOString(),
+      footer: {
+        text: 'IMPEL CRM  ·  +507 6283-8021  ·  impelpanama.com',
+        icon_url: 'https://impelpanama.com/icono.png'
+      }
+    }]
+  };
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', DISCORD_WH, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.timeout = 8000;
+  // No error handlers needed — failures are silent by design
+  xhr.send(JSON.stringify(payload));
+
+} catch(err) {
+  // Completely silent — never pollutes console
+}
 ```
 
-}, 100); // defer 100ms so it never blocks UI
+}, 200);
 }
 
 function fmtDate(iso) {

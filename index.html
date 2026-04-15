@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#08080f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>MiMisión</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ────────────────────────────────────────── */
+:root{
+  --bg:#08080f;
+  --c1:#0f0f18;
+  --c2:#141420;
+  --c3:#1a1a28;
+  --c4:#202030;
+  --b1:rgba(255,255,255,.055);
+  --b2:rgba(255,255,255,.09);
+  --b3:rgba(255,255,255,.15);
+  --accent:#6366f1;
+  --acl:rgba(99,102,241,.12);
+  --acm:rgba(99,102,241,.22);
+  --ok:#10b981;
+  --okl:rgba(16,185,129,.1);
+  --ng:#f43f5e;
+  --ngl:rgba(244,63,94,.1);
+  --warn:#f59e0b;
+  --wl:rgba(245,158,11,.1);
+  --t1:#f0f4f8;
+  --t2:#8192a4;
+  --t3:#3d4f62;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:14px;--rs:10px;
+}
+/* ─── RESET ─────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--t1);font-family:var(--font);max-width:430px;margin:0 auto;display:flex;flex-direction:column}
+svg{display:block;flex-shrink:0}
+button{font-family:var(--font);cursor:pointer;border:none;background:none;color:inherit}
+textarea{font-family:var(--font)}
+input[type=file]{display:none}
+
+/* ─── SCREENS ────────────────────────────────────────── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;will-change:transform}
+.screen.active{transform:none;opacity:1;pointer-events:all}
+.screen.exit{transform:translateX(-6%);opacity:0}
+
+/* ─── SCROLL ─────────────────────────────────────────── */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 16px 100px}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ─── HEADER ─────────────────────────────────────────── */
+.app-header{flex-shrink:0;padding:env(safe-area-inset-top,36px) 16px 14px;background:var(--bg);border-bottom:1px solid var(--b1)}
+.hrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.level-wrap{display:flex;align-items:center;gap:10px}
+.level-ring-sm{position:relative;width:38px;height:38px;flex-shrink:0}
+.level-ring-sm svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.lrs-bg{fill:none;stroke:var(--c3);stroke-width:3}
+.lrs-fg{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .8s}
+.lrs-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--accent)}
+.level-info{}
+.level-name{font-size:12px;font-weight:700;color:var(--t1);letter-spacing:.02em}
+.level-label{font-size:11px;color:var(--t2);font-weight:500}
+.header-right{display:flex;align-items:center;gap:10px}
+.streak-pill{display:flex;align-items:center;gap:5px;background:var(--c2);border:1px solid var(--b1);border-radius:100px;padding:5px 10px}
+.streak-pill svg{color:var(--warn)}
+.streak-num{font-size:13px;font-weight:700;color:var(--t1)}
+.streak-sub{font-size:11px;color:var(--t2)}
+.pts-block{text-align:right}
+.pts-num{font-size:19px;font-weight:800;color:var(--t1);line-height:1}
+.pts-sub{font-size:10px;color:var(--t2);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.xp-row{display:flex;align-items:center;gap:8px}
+.xp-track{flex:1;height:3px;background:var(--c3);border-radius:2px;overflow:hidden}
+.xp-bar{height:100%;background:var(--accent);border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.xp-text{font-size:10px;color:var(--t3);font-family:var(--mono);white-space:nowrap}
+
+/* ─── SECTION HEADING ────────────────────────────────── */
+.sec-head{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin:22px 0 10px}
+
+/* ─── MISSION CARD ───────────────────────────────────── */
+.mc{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:background .15s,border-color .15s,transform .12s;position:relative;overflow:hidden}
+.mc:active{transform:scale(.992);background:var(--c2)}
+.mc.daily{border-color:rgba(99,102,241,.25)}
+.mc.daily::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.mc.done{opacity:.4;pointer-events:none}
+.mc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.cat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid}
+.mc-meta{flex:1;min-width:0}
+.mc-label{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.cat-pill{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:2px 7px;border-radius:100px;border:1px solid}
+.daily-pip{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pip 1.8s ease-in-out infinite}
+@keyframes pip{0%,100%{opacity:1}50%{opacity:.3}}
+.mc-title{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-desc{font-size:13px;color:var(--t2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mc-pts{font-size:16px;font-weight:800;color:var(--t1);white-space:nowrap}
+.mc-pts span{font-size:11px;font-weight:500;color:var(--t3)}
+.mc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)}
+.val-tag{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--t2)}
+.val-tag svg{width:13px;height:13px}
+.mc-timer{font-size:11px;color:var(--t3);font-family:var(--mono)}
+
+/* ─── CATEGORY COLORS ────────────────────────────────── */
+.ci-explore{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.2);color:#3b82f6}
+.ci-social{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.2);color:#8b5cf6}
+.ci-move{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.2);color:#10b981}
+.ci-observe{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.2);color:#f59e0b}
+.ci-listen{background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.2);color:#6366f1}
+.cp-explore{color:#3b82f6;border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08)}
+.cp-social{color:#8b5cf6;border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08)}
+.cp-move{color:#10b981;border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)}
+.cp-observe{color:#f59e0b;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)}
+.cp-listen{color:#6366f1;border-color:rgba(99,102,241,.3);background:rgba(99,102,241,.08)}
+
+/* ─── PAGE HEADER ────────────────────────────────────── */
+.page-header{flex-shrink:0;padding:env(safe-area-inset-top,36px) 16px 14px;background:var(--bg);border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:12px}
+.back-btn{width:36px;height:36px;border-radius:50%;background:var(--c2);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;color:var(--t2);flex-shrink:0;transition:background .15s}
+.back-btn:active{background:var(--c3)}
+.ph-title{font-size:15px;font-weight:700;color:var(--t1);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.plain-header{flex-shrink:0;padding:env(safe-area-inset-top,36px) 16px 14px;background:var(--bg);border-bottom:1px solid var(--b1)}
+.plain-header h1{font-size:22px;font-weight:800;color:var(--t1);margin-bottom:2px}
+.plain-header p{font-size:13px;color:var(--t2)}
+
+/* ─── MISSION DETAIL ─────────────────────────────────── */
+.det-hero{padding:20px 0 8px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.det-cat-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;border:1px solid}
+.det-cat-icon svg{width:26px;height:26px}
+.det-title{font-size:22px;font-weight:800;color:var(--t1);line-height:1.25}
+.det-desc{font-size:15px;color:var(--t2);line-height:1.7}
+.det-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.det-tag{display:flex;align-items:center;gap:5px;background:var(--c2);border:1px solid var(--b1);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:500;color:var(--t2)}
+.det-tag svg{width:13px;height:13px;color:var(--t3)}
+.evidence-block{background:var(--c2);border:1px solid var(--b2);border-radius:var(--r);padding:14px;margin:16px 0 0}
+.ev-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:10px}
+.ev-row{display:flex;align-items:center;gap:12px}
+.ev-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid}
+.ev-icon svg{width:18px;height:18px}
+.ev-body{}
+.ev-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.ev-desc{font-size:12px;color:var(--t2)}
+.done-banner{background:var(--okl);border:1px solid rgba(16,185,129,.25);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ok);margin-top:12px}
+.done-banner svg{width:16px;height:16px;flex-shrink:0}
+
+/* ─── BUTTONS ────────────────────────────────────────── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;transition:transform .12s,opacity .15s,background .15s;letter-spacing:.01em}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn svg{width:17px;height:17px;flex-shrink:0}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#7173f3}
+.btn-ok{background:var(--ok);color:#fff}
+.btn-ng{background:var(--ng);color:#fff}
+.btn-ghost{background:var(--c2);color:var(--t2);border:1px solid var(--b2);font-size:13px;margin-top:8px}
+.btn-ghost:hover{background:var(--c3);color:var(--t1)}
+
+/* ─── VALIDATION SHEET ───────────────────────────────── */
+.val-sheet{position:fixed;inset:0;z-index:600;display:none}
+.val-sheet.open{display:flex;flex-direction:column;justify-content:flex-end}
+.val-scrim{position:absolute;inset:0;background:rgba(0,0,0,.7);animation:fadeIn .25s}
+.val-panel{position:relative;background:var(--c1);border-radius:20px 20px 0 0;padding:0 16px env(safe-area-inset-bottom,16px);max-height:88vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.val-handle{width:36px;height:4px;background:var(--b3);border-radius:2px;margin:12px auto 0}
+.val-head{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px}
+.val-head-title{font-size:15px;font-weight:700;color:var(--t1)}
+.close-x{width:30px;height:30px;border-radius:50%;background:var(--c3);display:flex;align-items:center;justify-content:center;color:var(--t2)}
+.val-body{flex:1;overflow-y:auto;padding-bottom:8px}
+.val-body::-webkit-scrollbar{display:none}
+
+/* PHOTO VAL */
+.photo-area{display:flex;flex-direction:column;align-items:center;gap:14px;padding-bottom:8px}
+.photo-hint{font-size:13px;color:var(--t2);text-align:center;line-height:1.6;padding:0 4px}
+.viewfinder{width:100%;max-width:300px;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--c2);border:1px solid var(--b2);position:relative;display:flex;align-items:center;justify-content:center}
+.vf-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--t3)}
+.vf-placeholder p{font-size:12px}
+.vf-placeholder svg{width:40px;height:40px}
+.vf-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scan-anim{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(0,0,0,.75);border-radius:12px}
+.scan-anim.on{display:flex}
+.scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ok),transparent);animation:scanMove 1.4s ease-in-out infinite}
+@keyframes scanMove{0%{top:0}100%{top:100%}}
+.scan-label{font-size:12px;font-weight:700;color:var(--ok);letter-spacing:.08em;z-index:1}
+.ai-result-box{width:100%;background:var(--c2);border:1px solid var(--b2);border-radius:var(--rs);padding:16px;display:none;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.ai-result-box.show{display:flex}
+.ai-result-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.ai-result-icon.ok{background:var(--okl)}
+.ai-result-icon.ng{background:var(--ngl)}
+.ai-result-icon svg{width:22px;height:22px}
+.ai-result-icon.ok svg{color:var(--ok)}
+.ai-result-icon.ng svg{color:var(--ng)}
+.ai-verdict{font-size:16px;font-weight:800}
+.ai-verdict.ok{color:var(--ok)}
+.ai-verdict.ng{color:var(--ng)}
+.ai-conf{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.ai-msg{font-size:13px;color:var(--t2);line-height:1.55}
+
+/* GEO VAL */
+.geo-area{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0 8px}
+.geo-radar{width:160px;height:160px;border-radius:50%;border:1px solid rgba(59,130,246,.25);position:relative;display:flex;align-items:center;justify-content:center}
+.geo-radar::before{content:'';position:absolute;width:66%;height:66%;border-radius:50%;border:1px solid rgba(59,130,246,.15)}
+.geo-radar::after{content:'';position:absolute;width:33%;height:33%;border-radius:50%;border:1px solid rgba(59,130,246,.15)}
+.radar-sweep{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+.radar-sweep::after{content:'';position:absolute;top:50%;left:50%;width:50%;height:2px;background:linear-gradient(90deg,rgba(59,130,246,.9),transparent);transform-origin:left;animation:sweep 2.2s linear infinite}
+@keyframes sweep{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.geo-dot{width:10px;height:10px;border-radius:50%;background:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.2);z-index:1}
+.geo-info{text-align:center}
+.geo-status{font-size:14px;font-weight:700;color:#3b82f6;margin-bottom:2px}
+.geo-sub{font-size:12px;color:var(--t2)}
+.geo-progress-wrap{width:100%}
+.geo-progress-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.geo-progress-row span:first-child{color:var(--t2)}
+.geo-progress-row span:last-child{font-weight:700;color:#3b82f6;font-family:var(--mono)}
+.geo-track{height:6px;background:var(--c3);border-radius:3px;overflow:hidden}
+.geo-fill{height:100%;background:#3b82f6;border-radius:3px;transition:width .5s}
+.geo-hint{font-size:12px;color:var(--t2);text-align:center;line-height:1.6}
+
+/* WALK VAL */
+.walk-area{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0 8px}
+.step-ring{width:160px;height:160px;position:relative;display:flex;align-items:center;justify-content:center}
+.step-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.sr-bg{fill:none;stroke:var(--c3);stroke-width:8}
+.sr-fg{fill:none;stroke:var(--ok);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .5s}
+.step-inner{text-align:center;z-index:1}
+.step-num{font-size:30px;font-weight:800;color:var(--ok);line-height:1}
+.step-lbl{font-size:11px;color:var(--t2);font-weight:500}
+.motion-viz{display:flex;align-items:flex-end;gap:2.5px;height:36px}
+.mv-bar{width:4px;border-radius:2px;background:var(--ok);opacity:.5;transform-origin:bottom}
+.walk-hint{font-size:12px;color:var(--t2);text-align:center;line-height:1.6}
+.walk-goal{font-size:13px;color:var(--t2);text-align:center}
+.walk-goal strong{color:var(--ok)}
+
+/* TIME VAL */
+.time-area{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0 8px}
+.timer-ring{width:160px;height:160px;position:relative;display:flex;align-items:center;justify-content:center}
+.timer-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.tr-bg{fill:none;stroke:var(--c3);stroke-width:8}
+.tr-fg{fill:none;stroke:var(--warn);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.timer-inner{text-align:center;z-index:1}
+.timer-num{font-size:30px;font-weight:800;color:var(--t1);line-height:1;font-family:var(--mono)}
+.timer-lbl{font-size:11px;color:var(--t2)}
+.timer-hint{font-size:13px;color:var(--t2);text-align:center;line-height:1.65;padding:0 8px}
+
+/* REFLECT VAL */
+.reflect-area{display:flex;flex-direction:column;gap:12px;padding:4px 0 8px}
+.reflect-questions{background:var(--c2);border:1px solid var(--b2);border-radius:var(--rs);padding:14px;font-size:13px;color:var(--t2);line-height:1.65}
+.reflect-questions p{margin-bottom:6px}
+.reflect-questions p:last-child{margin-bottom:0}
+.reflect-area textarea{background:var(--c2);border:1px solid var(--b2);border-radius:var(--rs);padding:14px;color:var(--t1);font-size:14px;line-height:1.7;resize:none;min-height:130px;outline:none;transition:border-color .2s}
+.reflect-area textarea:focus{border-color:var(--accent)}
+.reflect-area textarea::placeholder{color:var(--t3)}
+.word-counter{font-size:11px;color:var(--t3);font-family:var(--mono);text-align:right}
+.word-counter.met{color:var(--ok)}
+
+/* ─── RESULT OVERLAY ─────────────────────────────────── */
+.result-overlay{position:fixed;inset:0;z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(8,8,15,.94);backdrop-filter:blur(20px);padding:32px}
+.result-overlay.show{display:flex;animation:fadeIn .2s}
+.res-icon{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:16px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+.res-icon.ok{background:var(--okl);border:2px solid rgba(16,185,129,.3)}
+.res-icon.ok svg{color:var(--ok);width:36px;height:36px}
+.res-title{font-size:26px;font-weight:800;margin-bottom:4px;text-align:center}
+.res-title.ok{color:var(--ok)}
+.res-subtitle{font-size:14px;color:var(--t2);margin-bottom:12px;text-align:center}
+.res-pts{font-size:20px;font-weight:800;color:var(--t1);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.res-pts svg{color:var(--warn);width:18px;height:18px}
+.res-lvlup{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:var(--rs);padding:10px 20px;font-size:14px;font-weight:700;color:var(--accent);margin:6px 0;display:none}
+.res-ach{background:var(--c2);border:1px solid var(--b2);border-radius:var(--rs);padding:10px 14px;font-size:13px;color:var(--t2);margin:4px 0;display:none;align-items:center;gap:8px}
+.res-ach svg{color:var(--warn);width:16px;height:16px;flex-shrink:0}
+.res-close{margin-top:20px;padding:14px 48px;background:var(--accent);color:#fff;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;transition:transform .12s}
+.res-close:active{transform:scale(.96)}
+
+/* ─── TOAST ──────────────────────────────────────────── */
+.toast{position:fixed;top:max(50px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%) translateY(-90px);background:var(--c2);border:1px solid var(--b3);border-radius:var(--rs);padding:10px 16px;display:flex;align-items:center;gap:10px;z-index:1000;transition:transform .35s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 30px rgba(0,0,0,.6);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast-icon{color:var(--warn)}
+.toast-txt{font-size:12px;color:var(--t2)}
+.toast-txt strong{color:var(--t1)}
+
+/* ─── SERIES SCREEN ──────────────────────────────────── */
+.series-card{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:background .15s;overflow:hidden;position:relative}
+.series-card:active{background:var(--c2)}
+.sc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.sc-icon{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid}
+.sc-icon svg{width:22px;height:22px}
+.sc-info{flex:1}
+.sc-title{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.sc-sub{font-size:12px;color:var(--t2)}
+.sc-bonus{font-size:14px;font-weight:800;color:var(--t1)}
+.sc-bonus span{font-size:11px;color:var(--t3)}
+.sc-progress{display:flex;align-items:center;gap:8px}
+.sc-dots{display:flex;gap:4px}
+.sc-dot{width:8px;height:8px;border-radius:50%;background:var(--c3)}
+.sc-dot.done{background:var(--ok)}
+.sc-dot.active{background:var(--accent)}
+.sc-prog-txt{font-size:12px;color:var(--t2)}
+.sc-prog-txt strong{color:var(--t1)}
+.series-complete-badge{position:absolute;top:12px;right:12px;background:var(--okl);border:1px solid rgba(16,185,129,.25);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--ok);display:flex;align-items:center;gap:4px}
+.series-complete-badge svg{width:11px;height:11px}
+
+/* ─── SERIES DETAIL ──────────────────────────────────── */
+.series-header-block{padding:20px 0 16px}
+.sdesc{font-size:14px;color:var(--t2);line-height:1.65;margin-top:6px}
+.series-bonus-block{background:var(--acl);border:1px solid var(--acm);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;gap:10px;margin:12px 0 20px}
+.series-bonus-block svg{color:var(--accent);width:18px;height:18px;flex-shrink:0}
+.series-bonus-txt{font-size:13px;color:var(--t2)}
+.series-bonus-txt strong{color:var(--accent)}
+.series-m-item{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
+.series-m-item:active{background:var(--c2)}
+.smi-check{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1.5px solid var(--b2)}
+.smi-check.done{background:var(--okl);border-color:rgba(16,185,129,.3)}
+.smi-check.done svg{color:var(--ok)}
+.smi-check svg{width:14px;height:14px;color:var(--t3)}
+.smi-info{flex:1}
+.smi-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.smi-meta{font-size:12px;color:var(--t2)}
+.smi-pts{font-size:14px;font-weight:700;color:var(--t1)}
+
+/* ─── ACHIEVEMENTS ───────────────────────────────────── */
+.ach-card{background:var(--c1);border:1px solid var(--b1);border-radius:var(--rs);padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.ach-card.unlocked{border-color:rgba(245,158,11,.2)}
+.ach-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid}
+.ach-ico.locked{background:var(--c2);border-color:var(--b1);filter:grayscale(1);opacity:.3}
+.ach-ico svg{width:18px;height:18px}
+.ach-body{flex:1}
+.ach-name{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.ach-desc{font-size:11px;color:var(--t3)}
+.ach-card.locked .ach-name{color:var(--t2)}
+.ach-check{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ach-check.on{background:var(--okl);color:var(--ok)}
+.ach-check.on svg{width:11px;height:11px}
+.ach-check.off{background:var(--c3)}
+.ach-check.off::after{content:''}
+
+/* ─── PROFILE ────────────────────────────────────────── */
+.profile-rank{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:20px;margin-bottom:14px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.big-ring{width:110px;height:110px;position:relative;display:flex;align-items:center;justify-content:center}
+.big-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.br-bg{fill:none;stroke:var(--c3);stroke-width:7}
+.br-fg{fill:none;stroke:var(--accent);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s}
+.big-ring-inner{text-align:center;z-index:1}
+.br-num{font-size:26px;font-weight:800;color:var(--accent);line-height:1}
+.br-lbl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.rank-name-big{font-size:20px;font-weight:800;color:var(--t1)}
+.rank-sub{font-size:12px;color:var(--t2);text-align:center}
+.xp-profile-row{width:100%;display:flex;align-items:center;gap:8px}
+.xp-profile-bar{flex:1;height:4px;background:var(--c3);border-radius:2px;overflow:hidden}
+.xp-profile-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .8s}
+.xp-profile-lbl{font-size:10px;color:var(--t3);font-family:var(--mono);white-space:nowrap}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.stat-box{background:var(--c1);border:1px solid var(--b1);border-radius:var(--rs);padding:14px;text-align:center}
+.stat-val{font-size:26px;font-weight:800;line-height:1;margin-bottom:3px}
+.stat-lbl{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.week-row{display:flex;gap:5px;margin-bottom:14px}
+.wday{flex:1;height:30px;border-radius:8px;background:var(--c2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.03em;text-transform:uppercase}
+.wday.done{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.25);color:var(--accent)}
+.wday.today{border:1px solid var(--b3);color:var(--t1)}
+.cat-bar-row{margin-bottom:11px}
+.cbr-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.cbr-label{font-size:13px;color:var(--t2);font-weight:500;display:flex;align-items:center;gap:6px}
+.cbr-label svg{width:13px;height:13px}
+.cbr-val{font-size:12px;color:var(--t3);font-family:var(--mono)}
+.cbr-track{height:4px;background:var(--c3);border-radius:2px;overflow:hidden}
+.cbr-fill{height:100%;border-radius:2px;transition:width .6s}
+.history-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b1)}
+.hi-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid}
+.hi-icon svg{width:15px;height:15px}
+.hi-body{flex:1}
+.hi-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:1px}
+.hi-meta{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.hi-pts{font-size:13px;font-weight:800;color:var(--t1)}
+
+/* ─── HISTORY EMPTY ──────────────────────────────────── */
+.empty-state{text-align:center;padding:30px 0;color:var(--t3);font-size:13px}
+
+/* ─── BOTTOM NAV ─────────────────────────────────────── */
+.b-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(8,8,15,.96);backdrop-filter:blur(24px);border-top:1px solid var(--b1);display:flex;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:200}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px;color:var(--t3);font-size:10px;font-weight:600;letter-spacing:.02em;transition:color .2s}
+.nav-btn svg{width:22px;height:22px}
+.nav-btn.on{color:var(--accent)}
+
+/* ─── CONFETTI ───────────────────────────────────────── */
+.cfp{position:fixed;pointer-events:none;z-index:999;width:7px;height:7px;border-radius:2px;animation:cffall linear forwards}
+@keyframes cffall{0%{opacity:1;transform:translateY(0) rotate(0) scale(1)}100%{opacity:0;transform:translateY(240px) rotate(540deg) scale(.3)}}
+
+/* ─── UTIL ────────────────────────────────────────────── */
+.hidden{display:none!important}
+.divider{height:1px;background:var(--b1);margin:4px 0}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+  <div class="toast-txt"><strong id="toast-name"></strong> desbloqueado</div>
+</div>
+
+<!-- INPUT CAMERA -->
+<input type="file" accept="image/*" capture="environment" id="cam-input">
+
+<!-- RESULT OVERLAY -->
+<div class="result-overlay" id="result-overlay">
+  <div class="res-icon ok" id="res-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 11 4 16"/></svg>
+  </div>
+  <div class="res-title ok" id="res-title">Misión completada</div>
+  <div class="res-subtitle" id="res-sub">Operación exitosa</div>
+  <div class="res-pts" id="res-pts">
+    <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    <span id="res-pts-num">+50 puntos</span>
+  </div>
+  <div class="res-lvlup" id="res-lvlup">Subiste de nivel</div>
+  <div class="res-ach" id="res-ach">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+    <span id="res-ach-txt">Logro desbloqueado</span>
+  </div>
+  <button class="res-close" onclick="closeResult()">Continuar</button>
+</div>
+
+<!-- VALIDATION SHEET -->
+<div class="val-sheet" id="val-sheet">
+  <div class="val-scrim" onclick="closeVal()"></div>
+  <div class="val-panel">
+    <div class="val-handle"></div>
+    <div class="val-head">
+      <div class="val-head-title" id="val-title">Validación</div>
+      <button class="close-x" onclick="closeVal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="val-body scroll" id="val-body"></div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: HOME ══════════ -->
+<div class="screen active" id="sc-home">
+  <div class="app-header">
+    <div class="hrow">
+      <div class="level-wrap">
+        <div class="level-ring-sm">
+          <svg viewBox="0 0 38 38"><circle class="lrs-bg" cx="19" cy="19" r="16"/><circle class="lrs-fg" id="h-ring" cx="19" cy="19" r="16" stroke-dasharray="100.5" stroke-dashoffset="100.5"/></svg>
+          <div class="lrs-num" id="h-lvn">1</div>
+        </div>
+        <div class="level-info">
+          <div class="level-name" id="h-lvname">RECLUTA</div>
+          <div class="level-label" id="h-lvlabel">Nivel 1</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="streak-pill">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"/></svg>
+          <span class="streak-num" id="h-streak">0</span>
+          <span class="streak-sub">días</span>
+        </div>
+        <div class="pts-block">
+          <div class="pts-num" id="h-pts">0</div>
+          <div class="pts-sub">puntos</div>
+        </div>
+      </div>
+    </div>
+    <div class="xp-row">
+      <div class="xp-track"><div class="xp-bar" id="h-xpbar" style="width:0%"></div></div>
+      <div class="xp-text" id="h-xptxt">0/100 XP</div>
+    </div>
+  </div>
+  <div class="scroll">
+    <div class="sec-head">Misión diaria</div>
+    <div class="mc daily" id="mc-daily" onclick="openMission('daily')"></div>
+
+    <div class="sec-head" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Misión actual</span>
+      <button onclick="newRandom()" style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--t2);padding:0">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Nueva
+      </button>
+    </div>
+    <div class="mc" id="mc-rand" onclick="openMission('random')"></div>
+
+    <div class="sec-head">Últimas completadas</div>
+    <div id="home-recent"></div>
+  </div>
+  <nav class="b-nav">
+    <button class="nav-btn on" onclick="gotoMain('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="nav-btn" onclick="gotoMain('series',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Series
+    </button>
+    <button class="nav-btn" onclick="gotoMain('achieve',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Logros
+    </button>
+    <button class="nav-btn" onclick="gotoMain('profile',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </button>
+  </nav>
+</div>
+
+<!-- ══════════ SCREEN: MISSION DETAIL ══════════ -->
+<div class="screen" id="sc-mission">
+  <div class="page-header">
+    <button class="back-btn" onclick="backFrom('mission')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <div class="ph-title" id="det-ph-title">Misión</div>
+  </div>
+  <div class="scroll">
+    <div class="det-hero">
+      <div class="det-cat-icon" id="det-icon"></div>
+      <div class="cat-pill" id="det-cat-pill" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:3px 9px;border-radius:100px;border:1px solid;align-self:flex-start"></div>
+      <div class="det-title" id="det-title"></div>
+      <div class="det-desc" id="det-desc"></div>
+      <div class="det-tags" id="det-tags"></div>
+    </div>
+    <div class="evidence-block">
+      <div class="ev-label">Evidencia requerida</div>
+      <div class="ev-row">
+        <div class="ev-icon" id="ev-icon"></div>
+        <div class="ev-body">
+          <div class="ev-title" id="ev-title"></div>
+          <div class="ev-desc" id="ev-desc"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-accent" id="det-start-btn" onclick="startVal()">Iniciar validación</button>
+    <div class="done-banner hidden" id="det-done">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 11 4 16"/></svg>
+      Completada hoy
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: SERIES ══════════ -->
+<div class="screen" id="sc-series">
+  <div class="plain-header">
+    <h1>Series</h1>
+    <p>Misiones encadenadas con recompensa extra</p>
+  </div>
+  <div class="scroll" style="padding-top:14px" id="series-list"></div>
+  <nav class="b-nav">
+    <button class="nav-btn" onclick="gotoMain('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="nav-btn on" onclick="gotoMain('series',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Series
+    </button>
+    <button class="nav-btn" onclick="gotoMain('achieve',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Logros
+    </button>
+    <button class="nav-btn" onclick="gotoMain('profile',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </button>
+  </nav>
+</div>
+
+<!-- ══════════ SCREEN: SERIES DETAIL ══════════ -->
+<div class="screen" id="sc-series-det">
+  <div class="page-header">
+    <button class="back-btn" onclick="backFrom('series-det')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <div class="ph-title" id="sd-ph-title">Serie</div>
+  </div>
+  <div class="scroll">
+    <div class="series-header-block">
+      <div id="sd-cat-pill" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:3px 9px;border-radius:100px;border:1px solid;display:inline-block;margin-bottom:8px"></div>
+      <div style="font-size:22px;font-weight:800;color:var(--t1);margin-bottom:4px" id="sd-title"></div>
+      <div class="sdesc" id="sd-desc"></div>
+    </div>
+    <div class="series-bonus-block">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <div class="series-bonus-txt" id="sd-bonus"></div>
+    </div>
+    <div id="sd-missions"></div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: ACHIEVEMENTS ══════════ -->
+<div class="screen" id="sc-achieve">
+  <div class="plain-header">
+    <h1>Logros</h1>
+    <p id="ach-count-sub">0 / 0 desbloqueados</p>
+  </div>
+  <div class="scroll" style="padding-top:14px" id="ach-list"></div>
+  <nav class="b-nav">
+    <button class="nav-btn" onclick="gotoMain('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="nav-btn" onclick="gotoMain('series',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Series
+    </button>
+    <button class="nav-btn on" onclick="gotoMain('achieve',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Logros
+    </button>
+    <button class="nav-btn" onclick="gotoMain('profile',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </button>
+  </nav>
+</div>
+
+<!-- ══════════ SCREEN: PROFILE ══════════ -->
+<div class="screen" id="sc-profile">
+  <div class="plain-header">
+    <h1>Mi perfil</h1>
+    <p>Progreso y estadísticas</p>
+  </div>
+  <div class="scroll" style="padding-top:14px">
+    <div class="profile-rank">
+      <div class="big-ring">
+        <svg viewBox="0 0 110 110"><circle class="br-bg" cx="55" cy="55" r="48"/><circle class="br-fg" id="pr-ring" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"/></svg>
+        <div class="big-ring-inner"><div class="br-num" id="pr-lvn">1</div><div class="br-lbl">nivel</div></div>
+      </div>
+      <div class="rank-name-big" id="pr-rank">RECLUTA</div>
+      <div class="rank-sub" id="pr-sub">Comienza tu aventura</div>
+      <div class="xp-profile-row">
+        <div class="xp-profile-bar"><div class="xp-profile-fill" id="pr-xpbar" style="width:0%"></div></div>
+        <div class="xp-profile-lbl" id="pr-xptxt">0/100</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val" id="pr-total" style="color:var(--accent)">0</div><div class="stat-lbl">Misiones</div></div>
+      <div class="stat-box"><div class="stat-val" id="pr-streak" style="color:var(--warn)">0</div><div class="stat-lbl">Racha actual</div></div>
+      <div class="stat-box"><div class="stat-val" id="pr-pts" style="color:var(--ok)">0</div><div class="stat-lbl">Puntos</div></div>
+      <div class="stat-box"><div class="stat-val" id="pr-best" style="color:#8b5cf6">0</div><div class="stat-lbl">Mejor racha</div></div>
+    </div>
+    <div class="sec-head">Actividad semanal</div>
+    <div class="week-row" id="pr-week"></div>
+    <div class="sec-head">Por categoría</div>
+    <div id="pr-cats"></div>
+    <div class="sec-head">Historial</div>
+    <div id="pr-history"></div>
+  </div>
+  <nav class="b-nav">
+    <button class="nav-btn" onclick="gotoMain('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="nav-btn" onclick="gotoMain('series',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Series
+    </button>
+    <button class="nav-btn" onclick="gotoMain('achieve',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      Logros
+    </button>
+    <button class="nav-btn on" onclick="gotoMain('profile',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </button>
+  </nav>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// SVG ICONS
+// ════════════════════════════════════════════════════════════
+const P={
+  compass:'<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  activity:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  eye:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  headphones:'<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>',
+  camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>',
+  mappin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  penline:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  check:'<polyline points="20 6 9 11 4 16"/>',
+  xcircle:'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+  star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  award:'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  trending:'<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  link2:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  calendar:'<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  info:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+};
+const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[n]||''}</svg>`;
+
+// ════════════════════════════════════════════════════════════
+// CATEGORY & VALIDATION META
+// ════════════════════════════════════════════════════════════
+const CATS={
+  explore:{label:'Explorar',icon:'compass',cls:'explore'},
+  social:{label:'Social',icon:'users',cls:'social'},
+  move:{label:'Moverse',icon:'activity',cls:'move'},
+  observe:{label:'Observar',icon:'eye',cls:'observe'},
+  listen:{label:'Escuchar',icon:'headphones',cls:'listen'},
+};
+const VT={
+  PHOTO:{label:'Foto analizada por IA',icon:'camera',cls:'observe'},
+  GEO:{label:'Validación GPS',icon:'mappin',cls:'explore'},
+  WALK:{label:'Sensor de movimiento',icon:'activity',cls:'move'},
+  TIME:{label:'Temporizador',icon:'clock',cls:'listen'},
+  REFLECT:{label:'Reflexión escrita',icon:'penline',cls:'social'},
+};
+
+// ════════════════════════════════════════════════════════════
+// MISSIONS
+// ════════════════════════════════════════════════════════════
+const MISSIONS=[
+  {id:'ex1',title:'Calle Desconocida',desc:'Sal a caminar por una ruta que nunca hayas recorrido. Presta atención a 3 detalles del entorno.',cat:'explore',pts:60,diff:2,time:'20-30 min',val:{type:'GEO',hint:'Muévete al menos 300 metros desde tu posición actual.',distance:300}},
+  {id:'ex2',title:'Parque Sin Pantalla',desc:'Ve a un espacio verde y quédate 10 minutos sin tocar el teléfono. Observa, respira, existe.',cat:'explore',pts:70,diff:2,time:'10+ min',val:{type:'TIME',hint:'El temporizador valida tu tiempo en el parque.',duration:600}},
+  {id:'ex3',title:'Vista Nueva',desc:'Encuentra un lugar con una vista que nunca hayas contemplado. Quédate 5 minutos observando.',cat:'explore',pts:50,diff:1,time:'15 min',val:{type:'PHOTO',hint:'Fotografía la vista desde tu nuevo punto de observación.',req:'a scenic view, urban landscape, nature scene or viewpoint from an elevated or unusual vantage point'}},
+  {id:'ex4',title:'Local Desconocido',desc:'Entra a un negocio, café o tienda que hayas visto mil veces pero nunca visitado.',cat:'explore',pts:80,diff:2,time:'20 min',val:{type:'PHOTO',hint:'Toma una foto del interior del lugar que visitaste.',req:'an interior of a shop, café, restaurant, bookstore or any business establishment with shelves, furniture or products'}},
+  {id:'ex5',title:'Ruta Alternativa',desc:'Haz un trayecto cotidiano por un camino completamente diferente al habitual.',cat:'explore',pts:50,diff:1,time:'Variable',val:{type:'GEO',hint:'El GPS verifica tu desplazamiento.',distance:500}},
+  {id:'ex6',title:'Cielo Nocturno',desc:'Sal esta noche y observa las estrellas por 5 minutos. Intenta identificar una constelación.',cat:'explore',pts:70,diff:2,time:'10 min',val:{type:'PHOTO',hint:'Fotografía el cielo nocturno o el horizonte de noche.',req:'a night sky with stars, moon, or a dark outdoor nighttime scene'}},
+  {id:'so1',title:'Nuevo Conocido',desc:'Entabla una conversación real con alguien que no conoces. Aprende algo sobre esa persona.',cat:'social',pts:90,diff:3,time:'10+ min',val:{type:'REFLECT',hint:'Escribe sobre la conversación: ¿quién era, qué hablaron, qué aprendiste?',prompt:'¿Con quién hablaste? ¿Dónde fue? ¿Qué aprendiste sobre esa persona?'}},
+  {id:'so2',title:'Cumplido Genuino',desc:'Dale un cumplido sincero y específico a alguien. Que venga de corazón, no genérico.',cat:'social',pts:60,diff:1,time:'5 min',val:{type:'REFLECT',hint:'Escribe a quién le diste el cumplido y cómo reaccionó.',prompt:'¿A quién fue el cumplido? ¿Qué dijiste exactamente? ¿Cómo reaccionó?'}},
+  {id:'so3',title:'Reconectar',desc:'Escríbele a alguien con quien hayas perdido contacto. El gesto importa más que el mensaje.',cat:'social',pts:70,diff:2,time:'10 min',val:{type:'REFLECT',hint:'Escribe con quién reconectaste y cómo fue.',prompt:'¿A quién contactaste? ¿Cuánto tiempo sin hablar? ¿Cómo fue la respuesta?'}},
+  {id:'so4',title:'Gracias de Verdad',desc:'Agradécele a alguien de forma específica por algo concreto. Un gracias con detalle vale mil.',cat:'social',pts:65,diff:2,time:'10 min',val:{type:'REFLECT',hint:'Escribe a quién agradeciste y por qué fue especial.',prompt:'¿A quién agradeciste? ¿Por qué exactamente? ¿Cómo se lo transmitiste?'}},
+  {id:'so5',title:'Ayuda Inesperada',desc:'Ofrece ayuda a alguien sin que te la pida. Algo pequeño basta: abrir una puerta, dar indicaciones.',cat:'social',pts:80,diff:2,time:'5 min',val:{type:'REFLECT',hint:'Describe qué hiciste y cómo reaccionó la persona.',prompt:'¿A quién ayudaste? ¿Qué hiciste? ¿Cómo fue la reacción?'}},
+  {id:'mo1',title:'Caminata de 15 min',desc:'Sal a caminar sin destino fijo durante al menos 15 minutos. Sin prisa, sin propósito concreto.',cat:'move',pts:55,diff:1,time:'15 min',val:{type:'WALK',hint:'El sensor de movimiento registra tu actividad.',duration:900,steps:600}},
+  {id:'mo2',title:'Escaleras Siempre',desc:'Usa escaleras en vez de ascensor al menos 3 veces hoy. Cada piso cuenta.',cat:'move',pts:45,diff:1,time:'Variable',val:{type:'WALK',hint:'Activa el sensor para registrar tu movimiento.',duration:180,steps:150}},
+  {id:'mo3',title:'Estiramiento Matutino',desc:'10 minutos de estiramiento esta mañana. Cuello, espalda, piernas. Despacio.',cat:'move',pts:50,diff:1,time:'10 min',val:{type:'TIME',hint:'El temporizador valida tus 10 minutos.',duration:600}},
+  {id:'mo4',title:'Baile Espontáneo',desc:'Pon una canción que te guste y baila sin pensar en cómo te ves. Al menos 2 minutos.',cat:'move',pts:60,diff:1,time:'2 min',val:{type:'WALK',hint:'El sensor detectará tu movimiento mientras bailas.',duration:120,steps:80}},
+  {id:'mo5',title:'Sin Transporte',desc:'Un trayecto que hagas en vehículo, hazlo hoy a pie o en bici.',cat:'move',pts:85,diff:3,time:'Variable',val:{type:'GEO',hint:'El GPS verifica tu desplazamiento sin transporte.',distance:800}},
+  {id:'ob1',title:'Cazador de Color',desc:'Encuentra algo de color amarillo brillante en tu entorno. Que sea natural, no fabricado.',cat:'observe',pts:45,diff:1,time:'10 min',val:{type:'PHOTO',hint:'Fotografía el objeto amarillo que encontraste.',req:'something clearly and predominantly yellow in color — a flower, fruit, sign, painted surface or natural yellow object'}},
+  {id:'ob2',title:'Simetría Natural',desc:'Encuentra algo simétrico en la naturaleza o la arquitectura. Una hoja, una fachada, un patrón.',cat:'observe',pts:55,diff:2,time:'15 min',val:{type:'PHOTO',hint:'Captura la simetría desde el ángulo donde mejor se aprecia.',req:'a symmetrical object — a leaf, flower, building facade, pattern or architectural element with clear bilateral symmetry'}},
+  {id:'ob3',title:'Detalle Ignorado',desc:'Encuentra algo en un lugar que frecuentas que nunca habías notado antes. Documéntalo.',cat:'observe',pts:50,diff:1,time:'10 min',val:{type:'PHOTO',hint:'Fotografía el detalle que descubriste hoy.',req:'a small architectural detail, texture, sign, object or decoration in an everyday location that would typically go unnoticed'}},
+  {id:'ob4',title:'Sombra Creativa',desc:'Busca una sombra que forme una figura o patrón inusual. Puede ser de cualquier objeto.',cat:'observe',pts:50,diff:1,time:'15 min',val:{type:'PHOTO',hint:'Toma la foto donde la sombra sea el protagonista.',req:'a shadow cast by an object creating an interesting shape, pattern or silhouette on a surface'}},
+  {id:'ob5',title:'El Cielo en 3 Momentos',desc:'Mira el cielo en tres horarios distintos hoy. Fotografía el momento más bello.',cat:'observe',pts:55,diff:1,time:'Todo el día',val:{type:'PHOTO',hint:'Comparte la mejor foto de las tres que tomaste.',req:'a sky with interesting clouds, colors, light conditions — sunset, sunrise, dramatic clouds or clear blue sky'}},
+  {id:'li1',title:'Álbum Completo',desc:'Escucha un álbum completo de un artista que no conoces. Sin saltear canciones.',cat:'listen',pts:80,diff:2,time:'35+ min',val:{type:'TIME',hint:'Mantén la app mientras escuchas.',duration:2100}},
+  {id:'li2',title:'Silencio Activo',desc:'Siéntate en algún lugar y escucha el ambiente durante 5 minutos. Solo escucha.',cat:'listen',pts:55,diff:1,time:'5 min',val:{type:'TIME',hint:'El temporizador valida tu escucha activa.',duration:300}},
+  {id:'li3',title:'Podcast Nuevo',desc:'20 minutos de un podcast sobre un tema fuera de tu zona de confort.',cat:'listen',pts:65,diff:2,time:'20 min',val:{type:'TIME',hint:'Escucha 20 minutos seguidos.',duration:1200}},
+  {id:'li4',title:'Género Incómodo',desc:'Escucha un género musical que no disfrutas normalmente. Abre la mente.',cat:'listen',pts:60,diff:2,time:'15 min',val:{type:'TIME',hint:'15 minutos sin cambiar de género.',duration:900}},
+];
+
+const DAILY_POOL=[
+  {id:'dy0',title:'La Gran Exploración',desc:'Ve a un lugar de tu ciudad al que nunca hayas ido. Explora al menos 20 minutos con atención plena.',cat:'explore',pts:150,diff:3,time:'20+ min',val:{type:'GEO',hint:'GPS verificará que te desplazaste al menos 1 km.',distance:1000}},
+  {id:'dy1',title:'El Día Sin Queja',desc:'Cada vez que notes que vas a quejarte, sustitúyelo por algo neutral o positivo. Lleva la cuenta.',cat:'social',pts:200,diff:3,time:'Todo el día',val:{type:'REFLECT',hint:'Escribe un balance del día.',prompt:'¿Cuántas veces lo intentaste? ¿Cuántas lo lograste? ¿Qué fue lo más difícil de no quejarte?'}},
+  {id:'dy2',title:'Caminata de 30 min',desc:'Sal a caminar 30 minutos sin teléfono en mano. Cuando regreses, anota 3 pensamientos que tuviste.',cat:'move',pts:140,diff:2,time:'30 min',val:{type:'WALK',hint:'El sensor de pasos valida tu caminata de 30 minutos.',duration:1800,steps:2500}},
+  {id:'dy3',title:'Proyecto Fotográfico',desc:'Elige un tema (reflejos, puertas, colores, sombras) y toma 10 fotos con ese enfoque.',cat:'observe',pts:160,diff:3,time:'Todo el día',val:{type:'PHOTO',hint:'Comparte la mejor foto de tu serie temática.',req:'a creative or artistic photograph — a reflection, interesting door, texture, color composition, abstract or documentary street photo'}},
+  {id:'dy4',title:'El Extraño Amable',desc:'Ten una conversación real de 5 minutos con alguien que no conoces. Aprende su nombre.',cat:'social',pts:200,diff:3,time:'10+ min',val:{type:'REFLECT',hint:'Escribe sobre la conversación y qué aprendiste.',prompt:'¿Quién era? ¿Dónde lo conociste? ¿De qué hablaron? ¿Qué fue lo más inesperado?'}},
+  {id:'dy5',title:'Diario de Sonidos',desc:'Durante el día, registra 5 sonidos interesantes que escuches. Al final del día, reflexiona.',cat:'listen',pts:150,diff:2,time:'Todo el día',val:{type:'REFLECT',hint:'Lista los 5 sonidos y qué evocaron en ti.',prompt:'¿Cuáles fueron los 5 sonidos? ¿Dónde los escuchaste? ¿Qué pensaste o sentiste con cada uno?'}},
+  {id:'dy6',title:'Acto de Bondad',desc:'Haz algo significativo por alguien sin esperar nada a cambio. Que salga del corazón.',cat:'social',pts:180,diff:2,time:'Variable',val:{type:'REFLECT',hint:'Escribe sobre lo que hiciste y cómo te hizo sentir.',prompt:'¿Qué hiciste? ¿Para quién? ¿Por qué elegiste ese gesto? ¿Cómo te sentiste después?'}},
+  {id:'dy7',title:'Maratón de Movimiento',desc:'Completa al menos 5,000 movimientos activos registrados por sensor durante el día.',cat:'move',pts:220,diff:3,time:'Todo el día',val:{type:'WALK',hint:'El sensor acumula tu actividad del día.',duration:3600,steps:5000}},
+];
+
+const SERIES=[
+  {id:'s1',title:'Conexiones Reales',sub:'5 misiones sociales encadenadas',desc:'Completa cinco misiones sociales para demostrar que eres capaz de conectar de verdad con los demás. Cada misión suma a la siguiente.',cat:'social',bonus:200,mids:['so1','so2','so3','so4','so5']},
+  {id:'s2',title:'El Explorador',sub:'Descubre tu ciudad en 5 pasos',desc:'Cinco misiones de exploración para salir de tu zona de confort y conocer tu entorno desde una perspectiva nueva.',cat:'explore',bonus:250,mids:['ex1','ex3','ex4','ex5','ex6']},
+  {id:'s3',title:'Semana Activa',sub:'5 días de movimiento constante',desc:'Cinco misiones de movimiento para activar tu cuerpo, ganar energía y romper con la inercia del sedentarismo.',cat:'move',bonus:180,mids:['mo1','mo2','mo3','mo4','mo5']},
+  {id:'s4',title:'Ojo de Fotógrafo',sub:'Documenta el mundo a tu manera',desc:'Cinco misiones visuales que te entrenan para observar el mundo con más detalle y capturarlo con intención.',cat:'observe',bonus:160,mids:['ob1','ob2','ob3','ob4','ob5']},
+];
+
+const ACHIEVEMENTS=[
+  {id:'a1',icon:'zap',icos:'observe',name:'Primera Misión',desc:'Completa tu primera misión',check:s=>s.total>=1},
+  {id:'a2',icon:'star',icos:'observe',name:'En Marcha',desc:'Completa 5 misiones',check:s=>s.total>=5},
+  {id:'a3',icon:'award',icos:'observe',name:'Agente en Formación',desc:'Completa 10 misiones',check:s=>s.total>=10},
+  {id:'a4',icon:'target',icos:'observe',name:'Tiro al Blanco',desc:'Completa 20 misiones',check:s=>s.total>=20},
+  {id:'a5',icon:'shield',icos:'observe',name:'Veterano',desc:'Completa 50 misiones',check:s=>s.total>=50},
+  {id:'a6',icon:'flame',icos:'move',name:'En Racha',desc:'3 días seguidos completando misiones',check:s=>s.streak>=3},
+  {id:'a7',icon:'trending',icos:'move',name:'Semana Perfecta',desc:'7 días seguidos de misiones',check:s=>s.streak>=7},
+  {id:'a8',icon:'compass',icos:'explore',name:'Explorador Nato',desc:'5 misiones de Explorar',check:s=>(s.cats.explore||0)>=5},
+  {id:'a9',icon:'users',icos:'social',name:'Alma Social',desc:'5 misiones Sociales',check:s=>(s.cats.social||0)>=5},
+  {id:'a10',icon:'activity',icos:'move',name:'Siempre en Movimiento',desc:'5 misiones de Moverse',check:s=>(s.cats.move||0)>=5},
+  {id:'a11',icon:'eye',icos:'observe',name:'Ojo de Águila',desc:'5 misiones de Observar',check:s=>(s.cats.observe||0)>=5},
+  {id:'a12',icon:'headphones',icos:'listen',name:'Oído Atento',desc:'5 misiones de Escuchar',check:s=>(s.cats.listen||0)>=5},
+  {id:'a13',icon:'camera',icos:'observe',name:'Evidencia Visual',desc:'Valida 3 misiones con foto',check:s=>(s.photoVal||0)>=3},
+  {id:'a14',icon:'link2',icos:'social',name:'En Serie',desc:'Completa una serie completa',check:s=>Object.values(s.series||{}).some(x=>x.done)},
+  {id:'a15',icon:'shield',icos:'social',name:'Ícono de Campo',desc:'Alcanza el nivel 8',check:s=>s.level>=8},
+];
+
+const LEVELS=[
+  {lv:1,name:'Recluta',xp:0},
+  {lv:2,name:'Explorador',xp:100},
+  {lv:3,name:'Aventurero',xp:250},
+  {lv:4,name:'Agente',xp:500},
+  {lv:5,name:'Veterano',xp:850},
+  {lv:6,name:'Especialista',xp:1300},
+  {lv:7,name:'Élite',xp:1900},
+  {lv:8,name:'Maestro',xp:2700},
+  {lv:9,name:'Leyenda',xp:3700},
+  {lv:10,name:'Ícono',xp:5000},
+];
+
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+const DB={K:'mm_v4',load(){try{return JSON.parse(localStorage.getItem(this.K))||null}catch{return null}},save(s){localStorage.setItem(this.K,JSON.stringify(s))}};
+const mkS=()=>({pts:0,level:1,lvname:'Recluta',total:0,streak:0,bestStreak:0,lastDate:null,curId:null,dailyDate:null,history:[],achievements:[],cats:{explore:0,social:0,move:0,observe:0,listen:0},week:[0,0,0,0,0,0,0],series:{},photoVal:0,dailyCount:0});
+let S=DB.load()||mkS();
+let curM=null,curIsDaily=false,curSeriesId=null;
+let valM=null,valIsDaily=false;
+let _timerId=null,_motionH=null,_geoW=null;
+
+// ════════════════════════════════════════════════════════════
+// LEVEL ENGINE
+// ════════════════════════════════════════════════════════════
+function lvInfo(pts){let c=LEVELS[0],n=LEVELS[1];for(let i=0;i<LEVELS.length;i++){if(pts>=LEVELS[i].xp){c=LEVELS[i];n=LEVELS[i+1]||null;}}return{c,n};}
+function xpPct(pts){const{c,n}=lvInfo(pts);if(!n)return 100;return Math.round((pts-c.xp)/(n.xp-c.xp)*100);}
+
+// ════════════════════════════════════════════════════════════
+// MISSION ENGINE
+// ════════════════════════════════════════════════════════════
+const today=()=>new Date().toDateString();
+const getDM=()=>DAILY_POOL[Math.floor(Date.now()/86400000)%DAILY_POOL.length];
+function getCM(){if(S.curId){const m=MISSIONS.find(x=>x.id===S.curId);if(m)return m;}const m=MISSIONS[Math.floor(Math.random()*MISSIONS.length)];S.curId=m.id;DB.save(S);return m;}
+function newRandom(){const old=S.curId;let m;do{m=MISSIONS[Math.floor(Math.random()*MISSIONS.length)];}while(m.id===old);S.curId=m.id;DB.save(S);const card=document.getElementById('mc-rand');card.style.opacity=0;card.style.transition='none';setTimeout(()=>{renderRandCard();card.style.transition='opacity .25s';card.style.opacity=1;},60);}
+
+// ════════════════════════════════════════════════════════════
+// COMPLETE MISSION
+// ════════════════════════════════════════════════════════════
+function doComplete(m,isDaily){
+  if(isDaily&&S.dailyDate===today())return;
+  const prevLv=S.level;
+  S.pts+=m.pts;S.total++;
+  if(isDaily){S.dailyDate=today();S.dailyCount++;}
+  S.cats[m.cat]=(S.cats[m.cat]||0)+1;
+  if(m.val.type==='PHOTO')S.photoVal=(S.photoVal||0)+1;
+  updateStreak();
+  checkSeriesProgress(m.id);
+  const{c,n}=lvInfo(S.pts);const lvd=c.lv>prevLv;
+  S.level=c.lv;S.lvname=c.name;
+  S.history.unshift({id:m.id,title:m.title,pts:m.pts,cat:m.cat,vtype:m.val.type,ts:Date.now()});
+  if(S.history.length>100)S.history.pop();
+  if(!isDaily)S.curId=null;
+  const newAch=checkAch();
+  DB.save(S);
+  closeVal();
+  showResult(m,lvd,newAch);
+  confetti();
+  if(newAch.length)setTimeout(()=>showToast(newAch[0]),1600);
+}
+
+function updateStreak(){
+  const t=today();const y=new Date(Date.now()-86400000).toDateString();
+  if(S.lastDate===t)return;
+  S.streak=S.lastDate===y?S.streak+1:1;
+  if(S.streak>S.bestStreak)S.bestStreak=S.streak;
+  S.lastDate=t;S.week[new Date().getDay()]=1;
+}
+
+function checkAch(){const got=[];for(const a of ACHIEVEMENTS){if(!S.achievements.includes(a.id)&&a.check(S)){S.achievements.push(a.id);got.push(a);}}return got;}
+
+function checkSeriesProgress(mid){
+  for(const ser of SERIES){
+    if(!ser.mids.includes(mid))continue;
+    if(!S.series[ser.id])S.series[ser.id]={completed:[],done:false};
+    const sp=S.series[ser.id];
+    if(!sp.completed.includes(mid))sp.completed.push(mid);
+    if(!sp.done&&sp.completed.length>=ser.mids.length){sp.done=true;S.pts+=ser.bonus;}
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// VALIDATION SYSTEM
+// ════════════════════════════════════════════════════════════
+function startVal(){
+  if(!curM)return;
+  if(curIsDaily&&S.dailyDate===today())return;
+  valM=curM;valIsDaily=curIsDaily;
+  document.getElementById('val-title').textContent='Validación: '+VT[curM.val.type].label;
+  const sheet=document.getElementById('val-sheet');
+  sheet.style.display='flex';
+  buildValUI(curM);
+}
+
+function closeVal(){
+  stopValListeners();
+  const sheet=document.getElementById('val-sheet');
+  sheet.style.display='none';
+  document.getElementById('val-body').innerHTML='';
+}
+
+function stopValListeners(){
+  if(_timerId){clearInterval(_timerId);_timerId=null;}
+  if(_motionH){window.removeEventListener('devicemotion',_motionH);_motionH=null;}
+  if(_geoW&&navigator.geolocation){navigator.geolocation.clearWatch(_geoW);_geoW=null;}
+}
+
+function buildValUI(m){
+  const b=document.getElementById('val-body');
+  const t=m.val.type;
+  if(t==='PHOTO')buildPhoto(b,m);
+  else if(t==='GEO')buildGeo(b,m);
+  else if(t==='WALK')buildWalk(b,m);
+  else if(t==='TIME')buildTime(b,m);
+  else if(t==='REFLECT')buildReflect(b,m);
+}
+
+// ── PHOTO ──────────────────────────────────────────────────
+function buildPhoto(b,m){
+  b.innerHTML=`<div class="photo-area">
+    <p class="photo-hint">${m.val.hint}</p>
+    <div class="viewfinder" id="vf">
+      <div class="vf-placeholder" id="vf-ph">${ic('camera',40)}<p>Toca para abrir la cámara</p></div>
+      <div class="scan-anim" id="scan-anim"><div class="scan-line"></div><div class="scan-label">ANALIZANDO CON IA</div></div>
+    </div>
+    <div class="ai-result-box" id="ai-box">
+      <div class="ai-result-icon" id="ai-icon"></div>
+      <div class="ai-verdict" id="ai-verdict"></div>
+      <div class="ai-conf" id="ai-conf"></div>
+      <div class="ai-msg" id="ai-msg"></div>
+    </div>
+    <button class="btn btn-accent" id="photo-btn" onclick="triggerCamera()">
+      ${ic('camera',17)} Abrir cámara
+    </button>
+    <button class="btn btn-ghost hidden" id="retry-btn" onclick="resetPhoto()">Reintentar</button>
+    <button class="btn btn-ok hidden" id="accept-btn" onclick="acceptComplete()">
+      ${ic('check',17)} Confirmar y completar
+    </button>
+  </div>`;
+  document.getElementById('cam-input').onchange=handlePhoto;
+}
+
+function triggerCamera(){document.getElementById('cam-input').value='';document.getElementById('cam-input').click();}
+
+async function handlePhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const vf=document.getElementById('vf');
+  let img=vf.querySelector('img');if(!img){img=document.createElement('img');img.className='vf-img';vf.appendChild(img);}
+  img.src=URL.createObjectURL(f);
+  document.getElementById('vf-ph').style.display='none';
+  const sa=document.getElementById('scan-anim');sa.classList.add('on');
+  document.getElementById('photo-btn').classList.add('hidden');
+  try{
+    const b64=await toB64(f);
+    const res=await claudeVision(b64,f.type,valM);
+    sa.classList.remove('on');showPhotoResult(res);
+  }catch(err){
+    sa.classList.remove('on');
+    showPhotoResult({valid:false,confidence:0,msg:'Error de conexión. Intenta de nuevo.'});
+  }
+}
+
+function toB64(f){return new Promise(r=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.readAsDataURL(f);});}
+
+async function claudeVision(b64,mt,m){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:250,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mt,data:b64}},{type:'text',text:`You validate photo evidence for a real-life mission app. Mission: "${m.title}". What to verify: "${m.val.req}". Is this photo valid evidence?\n\nReturn ONLY valid JSON — no extra text:\n{"valid":true,"confidence":85,"msg":"Descripción breve en español, max 25 palabras"}\n\nBe fair but strict. Confidence 0-100.`}]}]})});
+  const d=await r.json();const t=d.content[0].text;
+  try{return JSON.parse(t.replace(/```json|```/g,'').trim());}
+  catch{return{valid:true,confidence:65,msg:'Imagen recibida. Evidencia registrada manualmente.'};}
+}
+
+function showPhotoResult(res){
+  const box=document.getElementById('ai-box');box.classList.add('show');
+  const icon=document.getElementById('ai-icon');
+  icon.className='ai-result-icon '+(res.valid?'ok':'ng');
+  icon.innerHTML=res.valid?ic('check',22):ic('xcircle',22);
+  document.getElementById('ai-verdict').textContent=res.valid?'Validado':'No válido';
+  document.getElementById('ai-verdict').className='ai-verdict '+(res.valid?'ok':'ng');
+  document.getElementById('ai-conf').textContent=`Confianza: ${res.confidence}%`;
+  document.getElementById('ai-msg').textContent=res.msg;
+  if(res.valid){document.getElementById('accept-btn').classList.remove('hidden');}
+  else{document.getElementById('retry-btn').classList.remove('hidden');}
+}
+
+function resetPhoto(){
+  const vf=document.getElementById('vf');const img=vf.querySelector('img');if(img)img.remove();
+  document.getElementById('vf-ph').style.display='flex';
+  document.getElementById('ai-box').classList.remove('show');
+  document.getElementById('photo-btn').classList.remove('hidden');
+  document.getElementById('retry-btn').classList.add('hidden');
+  document.getElementById('accept-btn').classList.add('hidden');
+}
+
+// ── GEO ────────────────────────────────────────────────────
+function buildGeo(b,m){
+  const dist=m.val.distance||300;
+  b.innerHTML=`<div class="geo-area">
+    <div class="geo-radar"><div class="radar-sweep"></div><div class="geo-dot"></div></div>
+    <div class="geo-info"><div class="geo-status" id="geo-status">Obteniendo señal GPS...</div><div class="geo-sub" id="geo-sub">Aguarda un momento</div></div>
+    <div class="geo-progress-wrap">
+      <div class="geo-progress-row"><span>Distancia recorrida</span><span id="geo-dist-txt">0 / ${dist} m</span></div>
+      <div class="geo-track"><div class="geo-fill" id="geo-fill" style="width:0%"></div></div>
+    </div>
+    <p class="geo-hint">${m.val.hint}</p>
+    <button class="btn btn-ok hidden" id="geo-done-btn" onclick="acceptComplete()">
+      ${ic('check',17)} Distancia verificada — Completar
+    </button>
+  </div>`;
+  if(!navigator.geolocation){document.getElementById('geo-status').textContent='GPS no disponible';return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const sp={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    document.getElementById('geo-status').textContent='Señal adquirida';
+    document.getElementById('geo-sub').textContent='Muévete — GPS activo';
+    _geoW=navigator.geolocation.watchPosition(cur=>{
+      const d=Math.round(haversine(sp.lat,sp.lng,cur.coords.latitude,cur.coords.longitude));
+      document.getElementById('geo-dist-txt').textContent=`${d} / ${dist} m`;
+      document.getElementById('geo-fill').style.width=Math.min(d/dist*100,100)+'%';
+      if(d>=dist){
+        document.getElementById('geo-status').textContent='Objetivo alcanzado';
+        document.getElementById('geo-sub').textContent='Distancia verificada';
+        document.getElementById('geo-done-btn').classList.remove('hidden');
+      }
+    },{enableHighAccuracy:true,maximumAge:3000});
+  },()=>{document.getElementById('geo-status').textContent='Error de señal';},{enableHighAccuracy:true,timeout:12000});
+}
+
+function haversine(lat1,ln1,lat2,ln2){const R=6371000,a=Math.sin(((lat2-lat1)*Math.PI/180)/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(((ln2-ln1)*Math.PI/180)/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+
+// ── WALK ────────────────────────────────────────────────────
+function buildWalk(b,m){
+  const target=m.val.steps||500;const circ=2*Math.PI*75;
+  const bars=Array.from({length:12},(_,i)=>`<div class="mv-bar" style="height:${14+Math.random()*18}px;animation:walkanim .${4+Math.floor(Math.random()*4)}s ${(i*.07).toFixed(2)}s ease-in-out infinite alternate"></div>`).join('');
+  b.innerHTML=`<style>.mv-bar{transition:height .1s}@keyframes walkanim{from{opacity:.3;transform:scaleY(1)}to{opacity:1;transform:scaleY(1.5)}}</style>
+  <div class="walk-area">
+    <div class="step-ring">
+      <svg viewBox="0 0 170 170"><circle class="sr-bg" cx="85" cy="85" r="75"/><circle class="sr-fg" id="sr-fg" cx="85" cy="85" r="75" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${circ.toFixed(1)}"/></svg>
+      <div class="step-inner"><div class="step-num" id="step-num">0</div><div class="step-lbl">movimientos</div></div>
+    </div>
+    <div class="walk-goal">Objetivo: <strong>${target}</strong> movimientos</div>
+    <div class="motion-viz">${bars}</div>
+    <p class="walk-hint">${m.val.hint}<br><span style="font-size:11px;color:var(--t3)">Lleva el teléfono contigo</span></p>
+    <button class="btn btn-ok hidden" id="walk-done-btn" onclick="acceptComplete()">
+      ${ic('check',17)} Actividad verificada
+    </button>
+  </div>`;
+  const circ2=2*Math.PI*75;let count=0,lastMag=0;const THRESH=9.8;
+  function listen(e){const a=e.acceleration||e.accelerationIncludingGravity;if(!a)return;const mag=Math.sqrt((a.x||0)**2+(a.y||0)**2+(a.z||0)**2);if(mag>THRESH&&lastMag<=THRESH){count++;const pct=Math.min(count/target,1);const el=document.getElementById('step-num');if(el)el.textContent=count;const fg=document.getElementById('sr-fg');if(fg)fg.style.strokeDashoffset=circ2*(1-pct);if(count>=target){const btn=document.getElementById('walk-done-btn');if(btn)btn.classList.remove('hidden');window.removeEventListener('devicemotion',_motionH);}}lastMag=mag;}
+  _motionH=listen;
+  if(typeof DeviceMotionEvent!=='undefined'&&DeviceMotionEvent.requestPermission){DeviceMotionEvent.requestPermission().then(p=>{if(p==='granted')window.addEventListener('devicemotion',_motionH);}).catch(()=>{});}
+  else window.addEventListener('devicemotion',_motionH);
+}
+
+// ── TIME ────────────────────────────────────────────────────
+function buildTime(b,m){
+  const total=m.val.duration;const circ=2*Math.PI*75;
+  b.innerHTML=`<div class="time-area">
+    <div class="timer-ring">
+      <svg viewBox="0 0 170 170"><circle class="tr-bg" cx="85" cy="85" r="75"/><circle class="tr-fg" id="tr-fg" cx="85" cy="85" r="75" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="0"/></svg>
+      <div class="timer-inner"><div class="timer-num" id="timer-num">${fmt(total)}</div><div class="timer-lbl">restante</div></div>
+    </div>
+    <p class="timer-hint">${m.val.hint}<br><span style="font-size:11px;color:var(--t3);display:block;margin-top:6px">No cierres la app</span></p>
+    <button class="btn btn-ok hidden" id="time-done-btn" onclick="acceptComplete()">
+      ${ic('check',17)} Tiempo completado
+    </button>
+  </div>`;
+  let rem=total;
+  _timerId=setInterval(()=>{rem--;const tn=document.getElementById('timer-num');if(tn)tn.textContent=fmt(rem);const fg=document.getElementById('tr-fg');if(fg)fg.style.strokeDashoffset=(circ*(rem/total)).toFixed(2);if(rem<=0){clearInterval(_timerId);const btn=document.getElementById('time-done-btn');if(btn)btn.classList.remove('hidden');}},1000);
+}
+const fmt=s=>`${String(Math.floor(Math.max(s,0)/60)).padStart(2,'0')}:${String(Math.max(s,0)%60).padStart(2,'0')}`;
+
+// ── REFLECT ─────────────────────────────────────────────────
+function buildReflect(b,m){
+  b.innerHTML=`<div class="reflect-area">
+    <div class="reflect-questions"><p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px">Preguntas guía</p>${m.val.prompt.split('?').filter(Boolean).map(q=>`<p>${q.trim()}?</p>`).join('')}</div>
+    <textarea id="reflect-ta" placeholder="Escribe tu reflexión (mínimo 20 palabras)..." oninput="countWords(this)"></textarea>
+    <div class="word-counter" id="wc">0 / 20 palabras</div>
+    <button class="btn btn-accent" id="reflect-btn" disabled onclick="acceptComplete()">
+      ${ic('penline',17)} Enviar reflexión
+    </button>
+  </div>`;
+}
+
+function countWords(el){const n=el.value.trim().split(/\s+/).filter(Boolean).length;const wc=document.getElementById('wc');const btn=document.getElementById('reflect-btn');wc.textContent=`${n} / 20 palabras`;const ok=n>=20;wc.classList.toggle('met',ok);btn.disabled=!ok;}
+
+function acceptComplete(){stopValListeners();doComplete(valM,valIsDaily);}
+
+// ════════════════════════════════════════════════════════════
+// RESULT OVERLAY
+// ════════════════════════════════════════════════════════════
+function showResult(m,lvd,newAch){
+  document.getElementById('res-title').textContent='Misión completada';
+  document.getElementById('res-sub').textContent=m.title;
+  document.getElementById('res-pts-num').textContent=`+${m.pts} puntos`;
+  const lu=document.getElementById('res-lvlup');lu.style.display=lvd?'block':'none';if(lvd)lu.textContent=`Subiste a ${S.lvname}`;
+  const ra=document.getElementById('res-ach');
+  if(newAch.length){ra.style.display='flex';document.getElementById('res-ach-txt').textContent=newAch[0].name;}else ra.style.display='none';
+  document.getElementById('result-overlay').classList.add('show');
+}
+function closeResult(){document.getElementById('result-overlay').classList.remove('show');renderHome();if(curM)renderDetScreen(curM,curIsDaily);}
+
+// ════════════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════════════
+function showToast(a){document.getElementById('toast-name').textContent=a.name;const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+
+// ════════════════════════════════════════════════════════════
+// CONFETTI
+// ════════════════════════════════════════════════════════════
+function confetti(){const cols=['#6366f1','#10b981','#f59e0b','#3b82f6','#8b5cf6','#f43f5e'];for(let i=0;i<18;i++){const p=document.createElement('div');p.className='cfp';p.style.cssText=`left:${10+Math.random()*80}%;top:${5+Math.random()*50}%;background:${cols[i%cols.length]};animation-delay:${(Math.random()*.35).toFixed(2)}s;animation-duration:${(.9+Math.random()*.8).toFixed(2)}s;`;document.body.appendChild(p);setTimeout(()=>p.remove(),2000);}}
+
+// ════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════
+
+// ── HEADER ─────────────────────────────────────────────────
+function renderHeader(){
+  const pct=xpPct(S.pts);const{c,n}=lvInfo(S.pts);
+  const circ=100.5;const offset=circ*(1-pct/100);
+  document.getElementById('h-lvn').textContent=S.level;
+  document.getElementById('h-ring').style.strokeDashoffset=offset;
+  document.getElementById('h-lvname').textContent=S.lvname;
+  document.getElementById('h-lvlabel').textContent='Nivel '+S.level;
+  document.getElementById('h-streak').textContent=S.streak;
+  document.getElementById('h-pts').textContent=S.pts.toLocaleString();
+  document.getElementById('h-xpbar').style.width=pct+'%';
+  document.getElementById('h-xptxt').textContent=n?`${S.pts}/${n.xp} XP`:'MAX';
+}
+
+// ── MISSION CARD HTML ───────────────────────────────────────
+function missionCardHTML(m,isDaily){
+  const cat=CATS[m.cat];const vt=VT[m.val.type];
+  const done=isDaily&&S.dailyDate===today();
+  const dailyBadge=isDaily?`<div class="daily-pip" style="display:inline-block;margin-right:6px"></div>Misión diaria · `:'';
+  return `<div class="mc-top">
+    <div class="cat-icon ci-${m.cat}">${ic(cat.icon,22)}</div>
+    <div class="mc-meta">
+      <div class="mc-label">
+        ${isDaily?`<span class="daily-pip"></span>`:''}
+        <span class="cat-pill cp-${m.cat}">${cat.label}</span>
+      </div>
+      <div class="mc-title">${m.title}</div>
+      <div class="mc-desc">${m.desc}</div>
+    </div>
+    <div class="mc-pts">${m.pts}<span> pts</span></div>
+  </div>
+  <div class="mc-bottom">
+    <div class="val-tag">${ic(vt.icon,13)} ${vt.label}</div>
+    ${isDaily?`<div class="mc-timer" id="mc-daily-timer">—</div>`:`<div style="font-size:11px;color:var(--t3)">${m.time}</div>`}
+  </div>`;
+}
+
+function renderDailyCard(){
+  const dm=getDM();const done=S.dailyDate===today();
+  const el=document.getElementById('mc-daily');
+  el.innerHTML=missionCardHTML(dm,true);
+  if(done)el.classList.add('done');else el.classList.remove('done');
+}
+
+function renderRandCard(){
+  const m=getCM();
+  document.getElementById('mc-rand').innerHTML=missionCardHTML(m,false);
+}
+
+function renderRecent(){
+  const el=document.getElementById('home-recent');
+  const rec=S.history.slice(0,5);
+  if(!rec.length){el.innerHTML='<div class="empty-state">Completa tu primera misión para ver el historial</div>';return;}
+  el.innerHTML=rec.map(h=>{
+    const cat=CATS[h.cat];
+    const d=new Date(h.ts);const dstr=d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+    return`<div class="history-item">
+      <div class="hi-icon ci-${h.cat}">${ic(cat.icon,15)}</div>
+      <div class="hi-body"><div class="hi-title">${h.title}</div><div class="hi-meta">${VT[h.vtype]?.label||''} · ${dstr}</div></div>
+      <div class="hi-pts">+${h.pts}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHome(){renderHeader();renderDailyCard();renderRandCard();renderRecent();}
+
+// ── MISSION DETAIL ──────────────────────────────────────────
+function renderDetScreen(m,isDaily){
+  const cat=CATS[m.cat];const vt=VT[m.val.type];
+  document.getElementById('det-ph-title').textContent=m.title;
+  const di=document.getElementById('det-icon');di.className=`det-cat-icon ci-${m.cat}`;di.innerHTML=ic(cat.icon,26);
+  const cp=document.getElementById('det-cat-pill');cp.textContent=cat.label;cp.className=`cat-pill cp-${m.cat}`;
+  document.getElementById('det-title').textContent=m.title;
+  document.getElementById('det-desc').textContent=m.desc;
+  const diffs=['','Básica','Media','Avanzada'];
+  document.getElementById('det-tags').innerHTML=`
+    <div class="det-tag">${ic('star',13)} ${m.pts} puntos</div>
+    <div class="det-tag">${ic('clock',13)} ${m.time}</div>
+    <div class="det-tag">${ic('target',13)} Dificultad ${diffs[m.diff]||'Media'}</div>
+    ${isDaily?`<div class="det-tag" style="color:var(--accent);border-color:rgba(99,102,241,.3)">${ic('star',13)} Misión especial</div>`:''}`;
+  const ei=document.getElementById('ev-icon');ei.className=`ev-icon ci-${vt.cls}`;ei.innerHTML=ic(vt.icon,18);
+  document.getElementById('ev-title').textContent=vt.label;
+  document.getElementById('ev-desc').textContent=m.val.hint;
+  const done=isDaily&&S.dailyDate===today();
+  document.getElementById('det-start-btn').classList.toggle('hidden',done);
+  document.getElementById('det-done').classList.toggle('hidden',!done);
+}
+
+// ── SERIES ──────────────────────────────────────────────────
+function renderSeriesList(){
+  const el=document.getElementById('series-list');
+  el.innerHTML=SERIES.map(ser=>{
+    const cat=CATS[ser.cat];const sp=S.series[ser.id];
+    const comp=sp?sp.completed.length:0;const total=ser.mids.length;const done=sp&&sp.done;
+    const dots=ser.mids.map((mid,i)=>{
+      const isDone=sp&&sp.completed.includes(mid);
+      return`<div class="sc-dot ${isDone?'done':''}"></div>`;
+    }).join('');
+    return`<div class="series-card" onclick="openSeries('${ser.id}')">
+      ${done?`<div class="series-complete-badge">${ic('check',11)} Completada</div>`:''}
+      <div class="sc-top">
+        <div class="sc-icon ci-${ser.cat}">${ic(cat.icon,22)}</div>
+        <div class="sc-info"><div class="sc-title">${ser.title}</div><div class="sc-sub">${ser.sub}</div></div>
+        <div><div class="sc-bonus">${ser.bonus}<span> pts</span></div></div>
+      </div>
+      <div class="sc-progress">
+        <div class="sc-dots">${dots}</div>
+        <div class="sc-prog-txt"><strong>${comp}</strong>/${total} completadas</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openSeries(sid){
+  curSeriesId=sid;const ser=SERIES.find(s=>s.id===sid);
+  const cat=CATS[ser.cat];const sp=S.series[sid];
+  document.getElementById('sd-ph-title').textContent=ser.title;
+  const cp=document.getElementById('sd-cat-pill');cp.textContent=cat.label;cp.className=`cat-pill cp-${ser.cat}`;
+  document.getElementById('sd-title').textContent=ser.title;
+  document.getElementById('sd-desc').textContent=ser.desc;
+  document.getElementById('sd-bonus').innerHTML=`Completa las ${ser.mids.length} misiones y gana <strong>+${ser.bonus} puntos extra</strong>`;
+  const ml=document.getElementById('sd-missions');
+  ml.innerHTML=ser.mids.map((mid,i)=>{
+    const m=MISSIONS.find(x=>x.id===mid);if(!m)return'';
+    const done=sp&&sp.completed.includes(mid);
+    return`<div class="series-m-item" onclick="openMissionFromSeries('${mid}')">
+      <div class="smi-check ${done?'done':''}">${done?ic('check',14):ic('lock',14)}</div>
+      <div class="smi-info"><div class="smi-title">${m.title}</div><div class="smi-meta">${CATS[m.cat].label} · ${m.time}</div></div>
+      <div class="smi-pts">${m.pts}pts</div>
+    </div>`;
+  }).join('');
+  pushScreen('series-det');
+}
+
+function openMissionFromSeries(mid){
+  const m=MISSIONS.find(x=>x.id===mid);if(!m)return;
+  curM=m;curIsDaily=false;renderDetScreen(m,false);pushScreen('mission');
+}
+
+// ── ACHIEVEMENTS ────────────────────────────────────────────
+function renderAchievements(){
+  const n=S.achievements.length;
+  document.getElementById('ach-count-sub').textContent=`${n} / ${ACHIEVEMENTS.length} desbloqueados`;
+  document.getElementById('ach-list').innerHTML=ACHIEVEMENTS.map(a=>{
+    const on=S.achievements.includes(a.id);const cat=CATS[a.icos]||CATS.observe;
+    return`<div class="ach-card ${on?'unlocked':'locked'}">
+      <div class="ach-ico ${on?`ci-${a.icos}`:'locked'}">${ic(a.icon,18)}</div>
+      <div class="ach-body"><div class="ach-name">${a.name}</div><div class="ach-desc">${on?a.desc:'???'}</div></div>
+      <div class="ach-check ${on?'on':'off'}">${on?ic('check',11):''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── PROFILE ─────────────────────────────────────────────────
+function renderProfile(){
+  const pct=xpPct(S.pts);const{c,n}=lvInfo(S.pts);
+  const circ=301.6;document.getElementById('pr-ring').style.strokeDashoffset=(circ*(1-pct/100)).toFixed(2);
+  document.getElementById('pr-lvn').textContent=S.level;
+  document.getElementById('pr-rank').textContent=S.lvname;
+  document.getElementById('pr-sub').textContent=n?`${S.pts} XP · Siguiente: ${n.name}`:'Nivel máximo alcanzado';
+  document.getElementById('pr-xpbar').style.width=pct+'%';
+  document.getElementById('pr-xptxt').textContent=n?`${S.pts}/${n.xp}`:'MAX';
+  document.getElementById('pr-total').textContent=S.total;
+  document.getElementById('pr-streak').textContent=S.streak;
+  document.getElementById('pr-pts').textContent=S.pts;
+  document.getElementById('pr-best').textContent=S.bestStreak;
+  const days=['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];const today=new Date().getDay();const adj=(today===0?6:today-1);
+  document.getElementById('pr-week').innerHTML=days.map((d,i)=>{
+    const wIdx=(i+1)%7;const done=S.week[wIdx];const isT=i===adj;
+    return`<div class="wday ${done?'done':''} ${isT?'today':''}">${d}</div>`;
+  }).join('');
+  const catMeta=[{k:'explore',c:'#3b82f6'},{k:'social',c:'#8b5cf6'},{k:'move',c:'#10b981'},{k:'observe',c:'#f59e0b'},{k:'listen',c:'#6366f1'}];
+  document.getElementById('pr-cats').innerHTML=catMeta.map(({k,c})=>{
+    const cnt=S.cats[k]||0;const pct=S.total>0?Math.round(cnt/S.total*100):0;const cat=CATS[k];
+    return`<div class="cat-bar-row">
+      <div class="cbr-head"><span class="cbr-label">${ic(cat.icon,13)} ${cat.label}</span><span class="cbr-val">${cnt}</span></div>
+      <div class="cbr-track"><div class="cbr-fill" style="width:${pct}%;background:${c}"></div></div>
+    </div>`;
+  }).join('');
+  const fh=document.getElementById('pr-history');
+  fh.innerHTML=S.history.length?S.history.map(h=>{
+    const cat=CATS[h.cat];const d=new Date(h.ts);
+    const ds=d.toLocaleDateString('es',{day:'numeric',month:'short'});
+    return`<div class="history-item">
+      <div class="hi-icon ci-${h.cat}">${ic(cat.icon,15)}</div>
+      <div class="hi-body"><div class="hi-title">${h.title}</div><div class="hi-meta">${ds}</div></div>
+      <div class="hi-pts">+${h.pts}</div>
+    </div>`;
+  }).join(''):'<div class="empty-state">Sin historial aún</div>';
+}
+
+// ════════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════════
+const SCREEN_MAP={home:'sc-home',series:'sc-series','series-det':'sc-series-det',mission:'sc-mission',achieve:'sc-achieve',profile:'sc-profile'};
+let screenStack=['home'];
+
+function pushScreen(id){
+  const cur=screenStack[screenStack.length-1];
+  const curEl=document.getElementById(SCREEN_MAP[cur]);
+  if(curEl){curEl.classList.add('exit');setTimeout(()=>curEl.classList.remove('active','exit'),320);}
+  screenStack.push(id);
+  const nextEl=document.getElementById(SCREEN_MAP[id]);
+  if(nextEl)setTimeout(()=>nextEl.classList.add('active'),20);
+}
+
+function backFrom(id){
+  const el=document.getElementById(SCREEN_MAP[id]);
+  if(el){el.classList.remove('active');el.style.transform='translateX(100%)';setTimeout(()=>el.style.transform='',350);}
+  screenStack.pop();
+  const prev=screenStack[screenStack.length-1]||'home';
+  const prevEl=document.getElementById(SCREEN_MAP[prev]);
+  if(prevEl){prevEl.classList.remove('exit');prevEl.classList.add('active');}
+}
+
+function gotoMain(id,btn){
+  document.querySelectorAll('.screen.active').forEach(s=>{s.classList.remove('active');});
+  const el=document.getElementById(SCREEN_MAP[id]);
+  if(el)el.classList.add('active');
+  screenStack=['home',id];
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  if(id==='series')renderSeriesList();
+  if(id==='achieve')renderAchievements();
+  if(id==='profile')renderProfile();
+}
+
+function openMission(type){
+  curIsDaily=type==='daily';curM=curIsDaily?getDM():getCM();
+  renderDetScreen(curM,curIsDaily);pushScreen('mission');
+}
+
+// ── MIDNIGHT TIMER ──────────────────────────────────────────
+function midnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const d=m-n;return`${String(Math.floor(d/3600000)).padStart(2,'0')}:${String(Math.floor(d%3600000/60000)).padStart(2,'0')}:${String(Math.floor(d%60000/1000)).padStart(2,'0')}`;}
+setInterval(()=>{const el=document.getElementById('mc-daily-timer');if(el)el.textContent='Se renueva en '+midnight();},1000);
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+document.getElementById('sc-home').classList.add('active');
+renderHome();
+</script>
+</body>
+</html>
